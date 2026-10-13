@@ -1,0 +1,34 @@
+[
+  {
+    "name": "area: install",
+    "description": "Issues about install"
+  },
+  {
+    "name": "area: cli",
+    "description": "Issues about cli"
+  },
+  {
+    "name": "area: cache",
+    "description": "Issues about cache"
+  },
+  {
+    "name": "area: docs",
+    "description": "Issues about docs"
+  },
+  {
+    "name": "bug",
+    "description": "Something is not working"
+  },
+  {
+    "name": "enhancement",
+    "description": "New feature or request"
+  },
+  {
+    "name": "question",
+    "description": "Usage question"
+  },
+  {
+    "name": "duplicate",
+    "description": "This issue already exists"
+  }
+]

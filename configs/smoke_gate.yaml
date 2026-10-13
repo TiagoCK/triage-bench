@@ -1,0 +1,7 @@
+# Regression floors for the CI smoke eval on the synthetic fixture (tests/fixtures).
+# Set a little below the current values; CI fails if a change drops a metric under its floor.
+floors:
+  - {repo: acme/widgets, task: labels, subset: full, system: tfidf-lr, model: "-", metric: micro_f1, min: 0.68}
+  - {repo: acme/widgets, task: duplicates, subset: full, system: bm25, model: "-", metric: recall@5, min: 0.75}
+  - {repo: acme/widgets, task: duplicates, subset: full, system: bm25, model: "-", metric: mrr@10, min: 0.40}
+  - {repo: acme/widgets, task: duplicates, subset: full, system: difflib, model: "-", metric: recall@5, min: 0.75}

@@ -1,0 +1,10 @@
+# Config for the synthetic fixture repo used by tests and the CI smoke eval.
+defaults:
+  since: "2025-01-01"
+  until: "2025-06-01"
+  cutoff: "2025-04-01"
+  top_k_labels: 10
+  min_label_count: 5
+
+repos:
+  - name: acme/widgets

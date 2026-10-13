@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install (base deps only; no torch, no LiteLLM)
+        run: uv sync --locked
+      - name: Lint
+        run: make lint
+      - name: Unit tests
+        run: make test
+      - name: Smoke eval + regression gate
+        run: make smoke

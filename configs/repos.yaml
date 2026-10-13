@@ -1,0 +1,20 @@
+# Repositories to mine. Dates are ISO (YYYY-MM-DD), interpreted as UTC.
+# Issues created in [since, until) are collected. Issues created before `cutoff`
+# are train / search index; issues created on or after `cutoff` are test.
+defaults:
+  since: "2025-03-01"
+  until: "2026-09-01"
+  cutoff: "2026-05-01"
+  top_k_labels: 15
+  min_label_count: 20
+
+repos:
+  - name: astral-sh/uv
+    # Full history, so originals of recent duplicates are in the search corpus.
+    since: "2023-10-01"
+    # uv marks few duplicates in 2026 (2-7 a month); an earlier cutoff gives the
+    # duplicate test split enough examples to be worth reporting.
+    cutoff: "2026-01-01"
+  - name: huggingface/transformers
+  - name: microsoft/vscode
+    since: "2025-09-01"   # vscode is huge; a shorter window keeps collection fast

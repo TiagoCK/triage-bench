@@ -1,0 +1,25 @@
+# LLM matrix for the eval. `id` is the LiteLLM model string.
+# input_price / output_price are USD per 1M tokens. Leave them out to let LiteLLM price the
+# call; set them when LiteLLM does not know the model yet. Local models are free.
+# `params` are passed straight to litellm.completion.
+models:
+  haiku:
+    id: anthropic/claude-haiku-5-5
+    concurrency: 8
+  sonnet:
+    id: anthropic/claude-sonnet-5-5
+    concurrency: 4
+  qwen3.5-9b:
+    id: ollama_chat/qwen3.5:9b
+    input_price: 0
+    output_price: 0
+    concurrency: 1    # one local GPU; parallel requests just queue
+    params:
+      think: false    # with thinking on, the reasoning trace eats the whole token budget
+  gemma4-12b:
+    id: ollama_chat/gemma4:12b
+    input_price: 0
+    output_price: 0
+    concurrency: 1
+    params:
+      think: false
