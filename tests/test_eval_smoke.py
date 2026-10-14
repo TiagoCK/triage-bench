@@ -84,3 +84,19 @@ def test_duplicate_task_skipped_below_minimum(fixture_repo):
         ),
     )
     assert {r["task"] for r in rows} == {"labels"}
+
+
+def test_label_task_skipped_below_minimum(fixture_repo):
+    _, repo_dir, meta = fixture_repo
+    too_many = meta["n_labeled"]["test"] + 1
+    rows = run_repo(
+        repo_dir,
+        EvalOptions(
+            systems=["tfidf", "bm25"],
+            sample=40,
+            min_test_duplicates=5,
+            min_test_labeled=too_many,
+            bootstrap=0,
+        ),
+    )
+    assert {r["task"] for r in rows} == {"duplicates"}

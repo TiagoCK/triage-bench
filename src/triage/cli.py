@@ -91,6 +91,9 @@ def eval_(
     min_test_duplicates: int = typer.Option(
         20, help="Skip the duplicate task for repos with fewer test duplicates than this."
     ),
+    min_test_labeled: int = typer.Option(
+        50, help="Skip the label task for repos with fewer labeled test issues than this."
+    ),
     embed_model: str = typer.Option("BAAI/bge-small-en-v1.5"),
     reranker_model: str = typer.Option("BAAI/bge-reranker-base"),
     config: Path = typer.Option(Path("configs/repos.yaml")),
@@ -113,6 +116,7 @@ def eval_(
         seed=seed,
         bootstrap=bootstrap,
         min_test_duplicates=min_test_duplicates,
+        min_test_labeled=min_test_labeled,
         embed_model=embed_model,
         reranker_model=reranker_model,
     )

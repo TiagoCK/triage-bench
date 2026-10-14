@@ -16,6 +16,10 @@ class RepoConfig:
     cutoff: datetime
     top_k_labels: int
     min_label_count: int
+    # A label added within this many seconds of issue creation counts as template-applied.
+    creation_window_s: int = 60
+    # Labels template-applied for more than this share of their train uses are not targets.
+    max_creation_share: float = 0.5
 
     @property
     def slug(self) -> str:
@@ -51,6 +55,8 @@ def load_repos(path: Path = Path("configs/repos.yaml")) -> list[RepoConfig]:
                 cutoff=_date(merged["cutoff"]),
                 top_k_labels=int(merged["top_k_labels"]),
                 min_label_count=int(merged["min_label_count"]),
+                creation_window_s=int(merged.get("creation_window_s", 60)),
+                max_creation_share=float(merged.get("max_creation_share", 0.5)),
             )
         )
     return out

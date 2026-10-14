@@ -29,6 +29,9 @@ query($owner: String!, $name: String!, $pageSize: Int!, $after: String) {
         author { login }
         labels(first: 30) { nodes { name } }
         comments(last: 5) { nodes { body author { login } } }
+        labelEvents: timelineItems(last: 30, itemTypes: [LABELED_EVENT]) {
+          nodes { ... on LabeledEvent { createdAt label { name } actor { login } } }
+        }
         timelineItems(
           first: 10
           itemTypes: [MARKED_AS_DUPLICATE_EVENT, UNMARKED_AS_DUPLICATE_EVENT]
@@ -122,6 +125,17 @@ def normalize_issue(node: dict[str, Any], repo: str) -> dict[str, Any]:
         "labels": [lbl["name"] for lbl in node["labels"]["nodes"]],
         "dup_links": duplicate_links(node, repo),
         "dup_mentions": duplicate_mentions(node, repo),
+        # When each label was added, so the build can tell issue-template labels (applied
+        # at creation) from triage decisions.
+        "label_events": [
+            {
+                "label": ev["label"]["name"],
+                "at": ev["createdAt"],
+                "actor": (ev.get("actor") or {}).get("login"),
+            }
+            for ev in node["labelEvents"]["nodes"]
+            if ev.get("label")
+        ],
     }
 
 

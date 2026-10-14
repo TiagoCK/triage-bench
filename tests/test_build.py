@@ -1,6 +1,12 @@
 import pandas as pd
 
-from triage.dataset.build import build_dup_pairs, build_label_vocab, clean_body
+from triage.dataset.build import (
+    build_dup_pairs,
+    build_label_vocab,
+    clean_body,
+    labels_at_creation,
+    template_labels,
+)
 
 
 def test_clean_body_strips_template_comments():
@@ -11,6 +17,47 @@ def test_vocab_uses_train_only_and_excludes_process_labels():
     train = pd.DataFrame({"labels": [["bug", "duplicate"]] * 6 + [["docs"]] * 6})
     vocab = build_label_vocab(train, top_k=10, min_count=5)
     assert vocab == ["bug", "docs"]
+
+
+def test_workflow_labels_excluded():
+    names = [
+        "verified",
+        "insiders-released",
+        "verification-needed",
+        "testplan-item",
+        "under-discussion",
+        "ai-translated",
+        "needs-mre",
+        "WIP",
+        "confirmation-pending",
+        "chat",
+        "area:cli",
+    ]
+    train = pd.DataFrame({"labels": [names] * 5})
+    assert build_label_vocab(train, top_k=20, min_count=5) == ["area:cli", "chat"]
+
+
+def test_labels_at_creation_uses_latest_event():
+    created = pd.Timestamp("2025-01-01T00:00:00Z")
+    events = [
+        {"label": "bug", "at": "2025-01-01T00:00:01Z"},  # from the issue form
+        {"label": "area", "at": "2025-01-01T00:00:02Z"},  # form, removed, re-added later
+        {"label": "area", "at": "2025-01-03T00:00:00Z"},
+    ]
+    got = labels_at_creation(["bug", "area", "no-event"], events, created, window_s=60)
+    assert got == ["bug"]
+
+
+def test_template_labels_excluded_by_share():
+    train = pd.DataFrame(
+        {
+            "labels": [["bug", "cli"]] * 10,
+            "creation_labels": [["bug"]] * 8 + [["bug", "cli"]] * 2,
+        }
+    )
+    templated = template_labels(train, max_share=0.5)
+    assert templated == {"bug": 1.0}
+    assert build_label_vocab(train, 10, 5, exclude=set(templated)) == ["cli"]
 
 
 def test_split_and_vocab(fixture_repo):

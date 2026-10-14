@@ -114,6 +114,15 @@ def main() -> None:
                 "labels": labels,
                 "dup_links": dup_links,
                 "dup_mentions": [],
+                # Applied by a maintainer two hours in, so none count as template labels.
+                "label_events": [
+                    {
+                        "label": lbl,
+                        "at": (created + timedelta(hours=2)).isoformat().replace("+00:00", "Z"),
+                        "actor": "maintainer",
+                    }
+                    for lbl in labels
+                ],
                 "_canon": canon["number"] if canon else None,
                 "_topic": topic,
                 "_kind": kind,

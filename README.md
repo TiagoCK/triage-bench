@@ -39,6 +39,16 @@ and a feedback loop.
   order. Issues closed as duplicate with no link fall back to a single unambiguous issue
   reference in their comments (source `mention`). `meta.json` records how many pairs each
   rule produced.
+- **Label targets are triage decisions, not form choices.** Workflow labels (verified,
+  released, needs-*, pending, test-plan, WIP, bot `ai-*` tags) are excluded. So are template
+  labels: labels that, for most of their train uses, were added within 60 seconds of the
+  issue being opened. On transformers, 1,608 of 1,619 `bug` labels were added at creation by
+  the issue's own author, so they come from the issue form. `meta.json` lists every excluded
+  template label with its at-creation share.
+- **Repos with too little ground truth are skipped, not reported.** A task runs only with at
+  least 20 test duplicates or 50 labeled test issues. huggingface/transformers fails both
+  (1 test duplicate, 1 labeled test issue once form labels are removed), so it is collected
+  but not scored.
 - **The search corpus reaches back further than the test window.** Originals of recent
   duplicates are often old, so a repo's `since` date can predate its train window.
 - **Known caveats.** Labels are the issue's final labels, not the labels at open time. BM25

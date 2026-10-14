@@ -16,6 +16,11 @@ canonical/duplicate fields are unreliable). Each pair is oriented by, in order:
   2. close reason / label: if exactly one side was closed as or labeled duplicate, it is the
      duplicate,
   3. creation order: the newer issue is the duplicate.
+Label targets exclude workflow labels (EXCLUDED_LABEL_PATTERNS) and "template labels":
+labels that, for most of their train uses, were added within `creation_window_s` of the
+issue being opened. Those come from issue forms or instant automations, so they record which
+form the reporter picked rather than a triage decision.
+
 Issues closed as duplicate with no link at all fall back to their comments: if exactly one
 referenced issue is an older issue in the corpus, it becomes a pair with source "mention".
 These are less certain than explicit links, so they are tagged and can be excluded.
@@ -47,8 +52,16 @@ EXCLUDED_LABEL_PATTERNS = [
     r"spam",
     r"locked",
     r"info.?needed",
-    r"needs.?(more.?)?info",
+    r"needs",  # needs-info, needs-mre, needs-decision: waiting states
     r"awaiting",
+    r"pending",
+    r"verif",  # verified, verification-needed, author-verification-requested
+    r"released",  # insiders-released
+    r"candidate",  # release candidate fixes
+    r"testplan",  # testplan-item, on-testplan
+    r"discussion",  # under-discussion
+    r"\bwip\b",
+    r"^ai-",  # bot bookkeeping: ai-translated, ai-generated, ai-analyzed
     r"\*",  # vscode-style "*duplicate", "*caused-by-extension" resolution labels
 ]
 _EXCLUDED_RE = re.compile("|".join(EXCLUDED_LABEL_PATTERNS), re.IGNORECASE)
@@ -68,20 +81,50 @@ def clean_body(body: str) -> str:
 
 def load_raw(raw_dir: Path, slug: str) -> tuple[pd.DataFrame, list[dict]]:
     issues = pd.read_json(raw_dir / f"{slug}.jsonl", lines=True)
-    if "dup_mentions" not in issues.columns:
-        raise ValueError(
-            f"{slug}.jsonl predates undirected duplicate links; re-run `triage collect` "
-            "(cached pages make this cheap)"
-        )
+    if "label_events" not in issues.columns:
+        raise ValueError(f"{slug}.jsonl predates label timestamps; re-run `triage collect`")
     labels_path = raw_dir / f"{slug}.labels.json"
     label_defs = json.loads(labels_path.read_text()) if labels_path.exists() else []
     return issues, label_defs
 
 
-def build_label_vocab(train: pd.DataFrame, top_k: int, min_count: int) -> list[str]:
+def labels_at_creation(labels: list[str], events: list[dict], created_at, window_s: int) -> list:
+    """Current labels whose most recent "labeled" event came within `window_s` of creation.
+
+    A label with no recorded event (older than the 30 most recent label events, or carried
+    over in an issue transfer) is treated as not applied at creation.
+    """
+    latest: dict[str, pd.Timestamp] = {}
+    for ev in events:
+        at = pd.Timestamp(ev["at"])
+        if ev["label"] not in latest or at > latest[ev["label"]]:
+            latest[ev["label"]] = at
+    return [
+        lbl
+        for lbl in labels
+        if lbl in latest and (latest[lbl] - created_at).total_seconds() <= window_s
+    ]
+
+
+def template_labels(train: pd.DataFrame, max_share: float) -> dict[str, float]:
+    """Labels added at creation for more than `max_share` of their train uses, with shares."""
+    uses = Counter(lbl for ls in train["labels"] for lbl in ls)
+    at_creation = Counter(lbl for ls in train["creation_labels"] for lbl in ls)
+    return {
+        lbl: round(at_creation[lbl] / n, 3)
+        for lbl, n in uses.items()
+        if at_creation[lbl] / n > max_share
+    }
+
+
+def build_label_vocab(
+    train: pd.DataFrame, top_k: int, min_count: int, exclude: set[str] = frozenset()
+) -> list[str]:
     counts = Counter(lbl for labels in train["labels"] for lbl in labels)
     eligible = [
-        (lbl, c) for lbl, c in counts.items() if c >= min_count and not _EXCLUDED_RE.search(lbl)
+        (lbl, c)
+        for lbl, c in counts.items()
+        if c >= min_count and not _EXCLUDED_RE.search(lbl) and lbl not in exclude
     ]
     eligible.sort(key=lambda x: (-x[1], x[0]))
     return [lbl for lbl, _ in eligible[:top_k]]
@@ -188,9 +231,15 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
     # canonical issue. Used to keep such issues out of the "not a duplicate" negatives.
     issues["is_dup_flagged"] = issues["has_dup_signal"] | issues["dup_of"].notna()
 
-    vocab = build_label_vocab(
-        issues[issues["split"] == "train"], cfg.top_k_labels, cfg.min_label_count
-    )
+    issues["creation_labels"] = [
+        labels_at_creation(ls, evs, created, cfg.creation_window_s)
+        for ls, evs, created in zip(
+            issues["labels"], issues["label_events"], issues["created_at"], strict=True
+        )
+    ]
+    train = issues[issues["split"] == "train"]
+    templated = template_labels(train, cfg.max_creation_share)
+    vocab = build_label_vocab(train, cfg.top_k_labels, cfg.min_label_count, exclude=set(templated))
     vocab_set = set(vocab)
     issues["target_labels"] = issues["labels"].map(lambda ls: [x for x in ls if x in vocab_set])
 
@@ -232,6 +281,7 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
         },
         "n_closed_as_duplicate": int(issues["has_dup_signal"].sum()),
         "dup_pair_stats": dict(pair_stats),
+        "template_labels_excluded": templated,
         "label_vocab": [
             {"name": lbl, "description": descriptions.get(lbl, ""), "count": label_counts[lbl]}
             for lbl in vocab

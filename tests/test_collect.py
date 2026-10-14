@@ -25,6 +25,12 @@ def node(
         "labels": {"nodes": [{"name": n} for n in labels]},
         "comments": {"nodes": [{"body": c, "author": {"login": "m"}} for c in comments]},
         "timelineItems": {"nodes": list(timeline)},
+        "labelEvents": {
+            "nodes": [
+                {"createdAt": created, "label": {"name": n}, "actor": {"login": "form"}}
+                for n in labels
+            ]
+        },
     }
 
 
@@ -155,3 +161,8 @@ def test_mentions_collected_only_for_duplicate_closed_issues():
     closed = node(30000, state_reason="DUPLICATE", comments=comments)
     assert duplicate_mentions(closed, REPO) == [20792, 8441, 77]
     assert duplicate_mentions(node(30000, comments=comments), REPO) == []
+
+
+def test_label_events_recorded():
+    rec = normalize_issue(node(10, labels=["bug"]), REPO)
+    assert rec["label_events"] == [{"label": "bug", "at": "2025-05-01T00:00:00Z", "actor": "form"}]

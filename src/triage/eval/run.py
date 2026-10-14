@@ -59,6 +59,9 @@ class EvalOptions:
     # Below this, duplicate metrics are noise (e.g. huggingface/transformers has 1), so the
     # duplicate task is skipped rather than reported.
     min_test_duplicates: int = 20
+    # Same idea for labels: huggingface/transformers has 1 labeled test issue once
+    # issue-form labels are excluded.
+    min_test_labeled: int = 50
 
 
 def run_repo(repo_dir: Path, opts: EvalOptions) -> list[dict]:
@@ -69,8 +72,17 @@ def run_repo(repo_dir: Path, opts: EvalOptions) -> list[dict]:
     models = [m for m in opts.models if _model_available(m)]
 
     rows: list[dict] = []
+    n_test_labeled = meta["n_labeled"]["test"]
     if systems & LABEL_SYSTEMS and meta["label_vocab"]:
-        rows += _run_labels(meta, issues, systems, models, opts)
+        if n_test_labeled >= opts.min_test_labeled:
+            rows += _run_labels(meta, issues, systems, models, opts)
+        else:
+            log.warning(
+                "%s: only %d labeled test issues (< %d); skipping the label task",
+                meta["repo"],
+                n_test_labeled,
+                opts.min_test_labeled,
+            )
     n_test_dups = pairs.loc[pairs["split"] == "test", "duplicate"].nunique()
     if systems & DUP_SYSTEMS:
         if n_test_dups >= opts.min_test_duplicates:

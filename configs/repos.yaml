@@ -7,6 +7,10 @@ defaults:
   cutoff: "2026-05-01"
   top_k_labels: 15
   min_label_count: 20
+  # Labels added within 60s of an issue being opened for most of their uses come from issue
+  # forms or instant automations; they are excluded as prediction targets.
+  creation_window_s: 60
+  max_creation_share: 0.5
 
 repos:
   - name: astral-sh/uv
