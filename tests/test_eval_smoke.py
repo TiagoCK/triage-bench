@@ -4,7 +4,10 @@ from triage.eval.run import EvalOptions, run_repo
 
 def test_end_to_end_non_llm(fixture_repo):
     _, repo_dir, _ = fixture_repo
-    rows = run_repo(repo_dir, EvalOptions(systems=["tfidf", "difflib", "bm25"], sample=40))
+    rows = run_repo(
+        repo_dir,
+        EvalOptions(systems=["tfidf", "difflib", "bm25"], sample=40, min_test_duplicates=5),
+    )
     by = {(r["task"], r["subset"], r["system"]): r for r in rows}
     assert ("labels", "full", "tfidf-lr") in by
     assert ("duplicates", "full", "bm25") in by
@@ -54,7 +57,10 @@ def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch):
 
     fake = ModelConfig(key="fake", id="fake/model", concurrency=2)
     rows = run_mod.run_repo(
-        repo_dir, EvalOptions(systems=["llm-zeroshot", "llm-dups"], models=[fake], sample=40)
+        repo_dir,
+        EvalOptions(
+            systems=["llm-zeroshot", "llm-dups"], models=[fake], sample=40, min_test_duplicates=5
+        ),
     )
     by = {(r["task"], r["system"], r["model"]): r for r in rows}
     lab = by[("labels", "llm-zeroshot", "fake")]
@@ -66,3 +72,15 @@ def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch):
     assert dup["false_dup_rate"] == 0.0
     assert dup["precision@base_rate"] == 1.0
     assert ("duplicates", "bm25", "-") in by  # first stage reported on the same sample
+
+
+def test_duplicate_task_skipped_below_minimum(fixture_repo):
+    _, repo_dir, meta = fixture_repo
+    too_many = meta["n_duplicates"]["test"] + 1
+    rows = run_repo(
+        repo_dir,
+        EvalOptions(
+            systems=["tfidf", "bm25"], sample=40, min_test_duplicates=too_many, bootstrap=0
+        ),
+    )
+    assert {r["task"] for r in rows} == {"labels"}

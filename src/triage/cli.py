@@ -88,6 +88,9 @@ def eval_(
     sample: int = typer.Option(200, help="Test issues per task for LLM systems."),
     seed: int = typer.Option(0),
     bootstrap: int = typer.Option(1000, help="Bootstrap resamples for 95% CIs; 0 disables."),
+    min_test_duplicates: int = typer.Option(
+        20, help="Skip the duplicate task for repos with fewer test duplicates than this."
+    ),
     embed_model: str = typer.Option("BAAI/bge-small-en-v1.5"),
     reranker_model: str = typer.Option("BAAI/bge-reranker-base"),
     config: Path = typer.Option(Path("configs/repos.yaml")),
@@ -109,6 +112,7 @@ def eval_(
         sample=sample,
         seed=seed,
         bootstrap=bootstrap,
+        min_test_duplicates=min_test_duplicates,
         embed_model=embed_model,
         reranker_model=reranker_model,
     )

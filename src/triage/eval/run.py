@@ -56,6 +56,9 @@ class EvalOptions:
     reranker_model: str = "BAAI/bge-reranker-base"
     few_shot_k: int = 5
     bootstrap: int = 1000  # resamples for confidence intervals; 0 disables them
+    # Below this, duplicate metrics are noise (e.g. huggingface/transformers has 1), so the
+    # duplicate task is skipped rather than reported.
+    min_test_duplicates: int = 20
 
 
 def run_repo(repo_dir: Path, opts: EvalOptions) -> list[dict]:
@@ -68,8 +71,17 @@ def run_repo(repo_dir: Path, opts: EvalOptions) -> list[dict]:
     rows: list[dict] = []
     if systems & LABEL_SYSTEMS and meta["label_vocab"]:
         rows += _run_labels(meta, issues, systems, models, opts)
-    if systems & DUP_SYSTEMS and len(pairs[pairs["split"] == "test"]):
-        rows += _run_dups(meta, issues, pairs, systems, models, opts)
+    n_test_dups = pairs.loc[pairs["split"] == "test", "duplicate"].nunique()
+    if systems & DUP_SYSTEMS:
+        if n_test_dups >= opts.min_test_duplicates:
+            rows += _run_dups(meta, issues, pairs, systems, models, opts)
+        else:
+            log.warning(
+                "%s: only %d test duplicates (< %d); skipping the duplicate task",
+                meta["repo"],
+                n_test_dups,
+                opts.min_test_duplicates,
+            )
 
     stamp = datetime.now(UTC).isoformat(timespec="seconds")
     for r in rows:
