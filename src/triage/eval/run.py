@@ -11,6 +11,7 @@ import importlib.util
 import json
 import logging
 import os
+import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -19,6 +20,7 @@ import httpx
 import numpy as np
 import pandas as pd
 
+from triage import llm
 from triage.config import ModelConfig
 from triage.eval import metrics
 from triage.systems import duplicates as dups
@@ -331,6 +333,9 @@ def _ops(records) -> dict:
         [r.latency_s for r in records], [r.cost_usd for r in records]
     )
     summary["cache_hit_rate"] = sum(r.cached for r in records) / len(records)
+    resolved = sorted({r.resolved_model for r in records if r.resolved_model})
+    if resolved:
+        summary["resolved_models"] = resolved
     return summary
 
 
@@ -354,6 +359,8 @@ def _available_systems(requested: list[str]) -> set[str]:
 
 
 def _model_available(model: ModelConfig) -> bool:
+    if model.id.startswith(llm.CLI_PREFIX):
+        return _claude_cli_ready(model)
     if model.id.startswith("anthropic/") and not os.environ.get("ANTHROPIC_API_KEY"):
         log.warning("ANTHROPIC_API_KEY not set; skipping model %s", model.key)
         return False
@@ -369,6 +376,34 @@ def _model_available(model: ModelConfig) -> bool:
         if wanted not in have and f"{wanted}:latest" not in have:
             log.warning("Ollama model %s not pulled (ollama pull %s); skipping", wanted, wanted)
             return False
+    return True
+
+
+def _claude_cli_ready(model: ModelConfig) -> bool:
+    """The CLI exists and is signed in with a Claude subscription (not an API key)."""
+    binary = llm.claude_bin()
+    if not binary:
+        log.warning("`claude` CLI not found (install it or set CLAUDE_BIN); skipping %s", model.key)
+        return False
+    try:
+        out = subprocess.run(
+            [binary, "auth", "status"],
+            capture_output=True,
+            text=True,
+            env=llm.cli_env(),
+            timeout=30,
+        )
+        method = json.loads(out.stdout).get("authMethod")
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        method = None
+    if method != "claude.ai":
+        log.warning(
+            "claude CLI auth method is %r, not a subscription login (run `claude auth "
+            "login`); skipping %s",
+            method,
+            model.key,
+        )
+        return False
     return True
 
 

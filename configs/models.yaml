@@ -23,3 +23,12 @@ models:
     concurrency: 1
     params:
       think: false
+  # Same models through the Claude Code CLI on your own subscription login instead of an
+  # API key (see README, "Running Claude on a subscription"). Usage counts against your
+  # plan's limits; the reported cost is an estimate at API prices, not a bill.
+  haiku-sub:
+    id: claude-cli/haiku
+    concurrency: 4
+  sonnet-sub:
+    id: claude-cli/sonnet
+    concurrency: 2

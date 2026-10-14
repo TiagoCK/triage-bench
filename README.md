@@ -126,6 +126,35 @@ For local models, run Ollama and pull a model listed in `configs/models.yaml`. T
 disabled through `params: {think: false}`; with it on, Qwen 3.5 spent its whole token budget
 reasoning and returned nothing.
 
+## Running Claude on a subscription
+
+The `haiku-sub` and `sonnet-sub` models run through the Claude Code CLI (`claude -p`) on
+your own Claude subscription login, not an API key:
+
+```bash
+claude auth login            # sign in with your Claude account (browser)
+claude auth status           # should report "authMethod": "claude.ai"
+uv run triage eval --repo microsoft/vscode --systems llm-zeroshot,llm-fewshot,llm-dups \
+  --models haiku-sub --sample 200
+```
+
+- **Policy.** Anthropic's support article ([Use the Claude Agent SDK with your Claude
+  plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan))
+  says `claude -p` usage draws from your subscription limits. Its [usage
+  policy](https://code.claude.com/docs/en/legal-and-compliance) says those limits assume
+  ordinary, individual use, and that products serving other people must use API keys.
+  Running this benchmark on your own machine fits that. A deployed triage bot does not.
+- **Not identical to the API.** Each call replaces Claude Code's system prompt with ours and
+  disables all tools. It still goes through the Claude Code harness, and the CLI cannot set
+  `max_tokens` or `temperature`. Rows are therefore labeled `haiku-sub`, kept apart from
+  `haiku` (API).
+- **Cost is an estimate.** `$/1k issues` for `-sub` rows is the CLI's estimate at API
+  prices; nothing is billed per call. Latency is the CLI's API time, excluding its startup.
+- **Usage limits.** A 200-issue run is about 600 calls. If you hit your plan's usage window,
+  re-run the same command later: finished calls come from the cache.
+- `ANTHROPIC_API_KEY` is removed from the CLI's environment so these calls cannot fall back
+  to API billing. `--bare` mode is not used, because it never reads the subscription login.
+
 ## Development
 
 ```bash
