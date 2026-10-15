@@ -157,6 +157,56 @@ def precision_at_base_rate(
     return correct_rate * base_rate / denom if denom else 0.0
 
 
+def base_rate_weights(is_dup: Sequence[bool], base_rate: float) -> np.ndarray:
+    """Per-item weights that turn a balanced sample into one at the natural duplicate rate."""
+    y = np.asarray(is_dup, dtype=bool)
+    sample_rate = y.mean() if len(y) else 0.0
+    if sample_rate in (0.0, 1.0):
+        return np.ones(len(y))
+    return np.where(y, base_rate / sample_rate, (1 - base_rate) / (1 - sample_rate))
+
+
+CALIBRATION_BINS = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+
+
+def calibration(
+    confidence: Sequence[float],
+    flagged: Sequence[bool],
+    correct: Sequence[bool],
+    is_dup: Sequence[bool],
+    base_rate: float,
+    bins: Sequence[float] = CALIBRATION_BINS,
+) -> dict:
+    """Does "0.9 confident" mean right 90% of the time, at the repo's real duplicate rate?
+
+    Over flagged items only, grouped by stated confidence: the base-rate-weighted share that
+    were correct, against the mean stated confidence. ECE is the weighted mean gap.
+    """
+    conf = np.asarray(confidence, dtype=float)
+    f = np.asarray(flagged, dtype=bool)
+    c = np.asarray(correct, dtype=bool)
+    w = base_rate_weights(is_dup, base_rate)
+    out_bins, gaps, total = [], 0.0, float(w[f].sum())
+    for i, (lo, hi) in enumerate(zip(bins[:-1], bins[1:], strict=True)):
+        upper = conf <= hi if i == len(bins) - 2 else conf < hi
+        m = f & (conf >= lo) & upper
+        weight = float(w[m].sum())
+        accuracy = float((w[m] * c[m]).sum() / weight) if weight else None
+        mean_conf = float(conf[m].mean()) if m.any() else None
+        out_bins.append(
+            {
+                "lo": lo,
+                "hi": hi,
+                "n": int(m.sum()),
+                "mean_confidence": mean_conf,
+                "accuracy": accuracy,
+            }
+        )
+        if weight:
+            gaps += weight * abs(accuracy - mean_conf)
+    return {"ece": gaps / total if total else None, "bins": out_bins}
+
+
 def bootstrap_ci(
     score_fn: Callable[[np.ndarray], dict[str, float]],
     n: int,

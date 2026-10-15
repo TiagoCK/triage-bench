@@ -11,6 +11,8 @@ defaults:
   # forms or instant automations; they are excluded as prediction targets.
   creation_window_s: 60
   max_creation_share: 0.5
+  # The last months of train double as validation for choosing thresholds.
+  validation_months: 3
 
 repos:
   - name: astral-sh/uv

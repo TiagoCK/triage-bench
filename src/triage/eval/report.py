@@ -21,6 +21,13 @@ DUP_COLS = [
     ("false_dup_rate", "false-dup rate"),
 ]
 OPS_COLS = [("usd_per_1k", "$/1k issues"), ("p50_latency_s", "p50 s"), ("p95_latency_s", "p95 s")]
+GATE_COLS = [
+    ("threshold", "threshold (from validation)"),
+    ("precision@base_rate", "P@base"),
+    ("recall", "dups caught"),
+    ("false_dup_rate", "false-dup rate"),
+    ("n_flags", "flags"),
+]
 
 
 def render(rows: list[dict]) -> str:
@@ -36,6 +43,12 @@ def render(rows: list[dict]) -> str:
     order = lambda r: (r["task"], r["repo"], r["subset"])  # noqa: E731
     for (task, repo, subset), group in groupby(sorted(rows, key=order), key=order):
         group = sorted(group, key=lambda r: (r["model"] != "-", r["system"], r["model"]))
+        if task == "calibration":
+            out += _calibration_table(repo, group)
+            continue
+        if task == "duplicates-gated":
+            out += _gate_table(repo, subset, group)
+            continue
         cols = (LABEL_COLS if task == "labels" else DUP_COLS) + OPS_COLS
         cols = [c for c in cols if any(r.get(c[0]) is not None for r in group)]
         n = int(max(r.get("n", 0) for r in group))
@@ -48,6 +61,47 @@ def render(rows: list[dict]) -> str:
             out.append(f"| {r['system']} | {r['model']} | " + " | ".join(cells) + " |")
         out.append("")
     return "\n".join(out)
+
+
+def _gate_table(repo: str, subset: str, group: list[dict]) -> list[str]:
+    n = int(max(r.get("n", 0) for r in group))
+    out = [
+        f"## duplicates-gated: {repo} ({subset}, n={n})",
+        "",
+        f"Judge: `{group[0].get('judge')}`. Each threshold was chosen on the validation sample "
+        "to reach the target precision with the most coverage, then applied once to test.",
+        "",
+        "| gate | model | " + " | ".join(h for _, h in GATE_COLS) + " |",
+        "|---|---|" + "---:|" * len(GATE_COLS),
+    ]
+    for r in sorted(group, key=lambda r: (r["system"], r["model"])):
+        if r.get("threshold") is None:
+            cells = ["not reachable on validation"] + ["-"] * (len(GATE_COLS) - 1)
+        else:
+            cells = [_fmt(r.get(k), r.get(f"{k}_ci")) for k, _ in GATE_COLS]
+        out.append(f"| {r['system']} | {r['model']} | " + " | ".join(cells) + " |")
+    return out + [""]
+
+
+def _calibration_table(repo: str, group: list[dict]) -> list[str]:
+    bins = group[0]["bins"]
+    heads = [f"{b['lo']:.1f}-{b['hi']:.1f}" for b in bins]
+    out = [
+        f"## calibration: {repo} (test, flagged items)",
+        "",
+        "Share of flagged duplicates that were correct, at the repo's natural duplicate rate, "
+        "grouped by the judge's stated confidence. A calibrated judge's accuracy matches "
+        "the bin. ECE is the weighted mean gap.",
+        "",
+        "| model | ECE | " + " | ".join(heads) + " |",
+        "|---|---:|" + "---:|" * len(heads),
+    ]
+    for r in group:
+        cells = [
+            "-" if b["accuracy"] is None else f"{b['accuracy']:.2f} (n={b['n']})" for b in r["bins"]
+        ]
+        out.append(f"| {r['model']} | {_fmt(r.get('ece'))} | " + " | ".join(cells) + " |")
+    return out + [""]
 
 
 def _fmt(v, ci=None) -> str:

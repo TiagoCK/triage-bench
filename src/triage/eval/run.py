@@ -64,6 +64,11 @@ class EvalOptions:
     # Same idea for labels: huggingface/transformers has 1 labeled test issue once
     # issue-form labels are excluded.
     min_test_labeled: int = 50
+    # Also run the LLM duplicate judge on a validation sample (end of the train period), so
+    # gate thresholds can be chosen without looking at test.
+    with_validation: bool = False
+    # Per-item LLM duplicate-judge predictions land here (one JSON file per run).
+    predictions_dir: Path = Path("results/predictions")
 
 
 def run_repo(repo_dir: Path, opts: EvalOptions) -> list[dict]:
@@ -236,26 +241,106 @@ def _run_dups(meta, issues, pairs, systems, models, opts) -> list[dict]:
 
     if run_llm:
         first = retrievers[first_key]
+        splits = [("test", pos_s, neg_s, base_rate)]
+        if opts.with_validation:
+            splits.append(("validation", *_validation_sample(issues, pairs, opts)))
         for model in models:
-            judge = dups.LLMDuplicateJudge(first, model, meta["repo"])
-            log.info("dups: %s on %s (%d issues)", judge.name, model.key, len(pos_s) + len(neg_s))
-            items = pos_s + neg_s
-            results = judge.judge_many(items)
-            scores = _decision_scores(
-                is_dup=[n in set(pos_s) for n in items],
-                ranked=[[h[0] for h in res[0]] for res in results],
-                flagged=[res[1] is not None for res in results],
-                correct=[
-                    res[1] in gold.get(n, set()) for n, res in zip(items, results, strict=True)
-                ],
-                golds=[gold.get(n, set()) for n in items],
-                base_rate=base_rate,
-                opts=opts,
-            )
-            scores.update(_ops(judge.records))
-            scores["failures"] = judge.failures
-            rows.append(_row("duplicates", subset_name, judge.name, model.key, scores))
+            for split, p_s, n_s, rate in splits:
+                # A fresh judge per split keeps cost and latency stats per split.
+                judge = dups.LLMDuplicateJudge(first, model, meta["repo"])
+                items = p_s + n_s
+                log.info("dups: %s on %s, %s (%d issues)", judge.name, model.key, split, len(items))
+                results = judge.judge_many(items)
+                _write_predictions(
+                    opts,
+                    meta,
+                    judge.name,
+                    model.key,
+                    split,
+                    rate,
+                    first,
+                    items,
+                    set(p_s),
+                    results,
+                    gold,
+                )
+                if split != "test":
+                    continue
+                scores = _decision_scores(
+                    is_dup=[n in set(p_s) for n in items],
+                    ranked=[[h[0] for h in res[0]] for res in results],
+                    flagged=[res[1] is not None for res in results],
+                    correct=[
+                        res[1] in gold.get(n, set()) for n, res in zip(items, results, strict=True)
+                    ],
+                    golds=[gold.get(n, set()) for n in items],
+                    base_rate=rate,
+                    opts=opts,
+                )
+                scores.update(_ops(judge.records))
+                scores["failures"] = judge.failures
+                rows.append(_row("duplicates", subset_name, judge.name, model.key, scores))
     return rows
+
+
+def _validation_sample(issues, pairs, opts) -> tuple[list[int], list[int], float]:
+    """Duplicates and non-duplicates from the end of the train period, sampled like test."""
+    val_numbers = set(issues.loc[issues["is_validation"], "number"].astype(int))
+    pos = sorted({int(n) for n in pairs["duplicate"] if int(n) in val_numbers})
+    neg_df = issues[issues["is_validation"] & ~issues["is_dup_flagged"]]
+    neg = [int(n) for n in neg_df["number"]]
+    rate = len(pos) / (len(pos) + len(neg)) if pos or neg else 0.0
+    half = max(1, opts.sample // 2)
+    pos_s = pd.Series(pos, dtype=int).sample(min(half, len(pos)), random_state=opts.seed)
+    neg_s = pd.Series(neg, dtype=int).sample(min(half, len(neg)), random_state=opts.seed)
+    log.info(
+        "dups: validation %d duplicates, %d negatives (base rate %.3f)", len(pos), len(neg), rate
+    )
+    return pos_s.tolist(), neg_s.tolist(), rate
+
+
+def _write_predictions(
+    opts, meta, system, model, split, base_rate, retriever, items, positives, results, gold
+) -> Path:
+    """One record per judged issue: what the judge chose, how sure it was, and the
+    embedding similarity of the candidates. Gate analysis reads these files, so choosing
+    thresholds never needs new model calls."""
+    records = []
+    for n, (hits, chosen, conf) in zip(items, results, strict=True):
+        sims = [retriever.similarity(n, h[0]) for h in hits]
+        known = sorted((s for s in sims if s is not None), reverse=True)
+        records.append(
+            {
+                "number": n,
+                "is_dup": n in positives,
+                "chosen": chosen,
+                "correct": chosen is not None and chosen in gold.get(n, set()),
+                "confidence": conf,
+                "candidates": [h[0] for h in hits],
+                "sim_chosen": retriever.similarity(n, chosen) if chosen is not None else None,
+                "sim_top1": known[0] if known else None,
+                "sim_top2": known[1] if len(known) > 1 else None,
+                "gold": sorted(gold.get(n, set())),
+            }
+        )
+    path = (
+        opts.predictions_dir
+        / meta["repo"].replace("/", "__")
+        / (f"{system}__{model}__{split}.json")
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "repo": meta["repo"],
+        "system": system,
+        "model": model,
+        "split": split,
+        "base_rate": base_rate,
+        "sample": opts.sample,
+        "seed": opts.seed,
+        "items": records,
+    }
+    path.write_text(json.dumps(payload, indent=1))
+    return path
 
 
 def _retrieval_scores(ranked: list, golds: list, opts: EvalOptions) -> dict:

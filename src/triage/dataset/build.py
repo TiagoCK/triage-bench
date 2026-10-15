@@ -217,6 +217,12 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
     issues = issues.sort_values("created_at").drop_duplicates("number").reset_index(drop=True)
 
     issues["split"] = (issues["created_at"] >= cfg.cutoff).map({True: "test", False: "train"})
+    # A slice of train, not a third split: labels still train on all of it, but thresholds
+    # are chosen here and only then applied to test.
+    validation_start = cfg.cutoff - pd.DateOffset(months=cfg.validation_months)
+    issues["is_validation"] = (issues["split"] == "train") & (
+        issues["created_at"] >= validation_start
+    )
     issues["body_clean"] = issues["body"].map(clean_body)
     issues["text"] = issues["title"] + "\n\n" + issues["body_clean"]
     issues["has_dup_signal"] = (issues["state_reason"] == "DUPLICATE") | issues["labels"].map(
@@ -259,6 +265,7 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
         "target_labels",
         "dup_of",
         "is_dup_flagged",
+        "is_validation",
     ]
     issues[keep].to_parquet(repo_dir / "issues.parquet", index=False)
     pairs.to_parquet(repo_dir / "dup_pairs.parquet", index=False)
@@ -280,6 +287,16 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
             s: int(pairs.loc[pairs["split"] == s, "duplicate"].nunique()) for s in ("train", "test")
         },
         "n_closed_as_duplicate": int(issues["has_dup_signal"].sum()),
+        "validation": {
+            "since": validation_start.isoformat(),
+            "n_issues": int(issues["is_validation"].sum()),
+            "n_duplicates": int(
+                pairs.loc[
+                    pairs["duplicate"].isin(issues.loc[issues["is_validation"], "number"]),
+                    "duplicate",
+                ].nunique()
+            ),
+        },
         "dup_pair_stats": dict(pair_stats),
         "template_labels_excluded": templated,
         "label_vocab": [

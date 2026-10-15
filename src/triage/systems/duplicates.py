@@ -47,6 +47,10 @@ class Retriever:
         top = np.argsort(-scores, kind="stable")[:k]
         return [(int(self.numbers[j]), float(scores[j])) for j in top]
 
+    def similarity(self, a: int, b: int) -> float | None:
+        """Embedding cosine between two issues, if this retriever has embeddings."""
+        return None
+
     def _build(self, issues: pd.DataFrame) -> None:
         raise NotImplementedError
 
@@ -125,6 +129,9 @@ class EmbeddingRetriever(Retriever):
     def _scores(self, i: int, n_before: int) -> np.ndarray:
         return self.emb[:n_before] @ self.emb[i]
 
+    def similarity(self, a: int, b: int) -> float | None:
+        return float(self.emb[self.position[a]] @ self.emb[self.position[b]])
+
 
 class HybridRetriever(Retriever):
     """Reciprocal rank fusion of BM25 and dense retrieval."""
@@ -139,6 +146,9 @@ class HybridRetriever(Retriever):
     def _build(self, issues: pd.DataFrame) -> None:
         self.bm25.index(issues)
         self.dense.index(issues)
+
+    def similarity(self, a: int, b: int) -> float | None:
+        return self.dense.similarity(a, b)
 
     def _scores(self, i: int, n_before: int) -> np.ndarray:
         fused = np.zeros(n_before)
@@ -166,6 +176,9 @@ class RerankedRetriever(Retriever):
         self.first.index(issues)
         self.ce = CrossEncoder(self.model_name, max_length=512)
         self.texts = (issues["title"] + "\n\n" + issues["body_clean"].str[:1000]).tolist()
+
+    def similarity(self, a: int, b: int) -> float | None:
+        return self.first.similarity(a, b)
 
     def search(self, number: int, k: int = 10) -> list[Hit]:
         candidates = self.first.search(number, self.depth)

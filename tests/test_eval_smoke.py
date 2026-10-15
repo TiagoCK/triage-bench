@@ -26,7 +26,7 @@ def test_end_to_end_non_llm(fixture_repo):
     assert "## duplicates: acme/widgets (full" in render(rows)
 
 
-def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch):
+def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch, tmp_path):
     """Exercise the LLM code paths with a stub that returns the gold answer."""
     import pandas as pd
 
@@ -59,7 +59,12 @@ def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch):
     rows = run_mod.run_repo(
         repo_dir,
         EvalOptions(
-            systems=["llm-zeroshot", "llm-dups"], models=[fake], sample=40, min_test_duplicates=5
+            systems=["llm-zeroshot", "llm-dups"],
+            models=[fake],
+            sample=40,
+            min_test_duplicates=5,
+            with_validation=True,
+            predictions_dir=tmp_path,
         ),
     )
     by = {(r["task"], r["system"], r["model"]): r for r in rows}
@@ -72,6 +77,21 @@ def test_llm_systems_offline_with_fake_model(fixture_repo, monkeypatch):
     assert dup["false_dup_rate"] == 0.0
     assert dup["precision@base_rate"] == 1.0
     assert ("duplicates", "bm25", "-") in by  # first stage reported on the same sample
+
+    # Per-item predictions for test and validation; validation is never in the table.
+    import json
+
+    files = {f.name: json.loads(f.read_text()) for f in (tmp_path / "acme__widgets").iterdir()}
+    test = files["bm25+llm__fake__test.json"]
+    val = files["bm25+llm__fake__validation.json"]
+    assert not any("validation" in r["subset"] for r in rows)
+    item = test["items"][0]
+    assert {"number", "is_dup", "chosen", "correct", "confidence", "sim_chosen"} <= set(item)
+    test_numbers = {i["number"] for i in test["items"]}
+    val_numbers = {i["number"] for i in val["items"]}
+    assert not test_numbers & val_numbers
+    assert issues.loc[sorted(val_numbers), "is_validation"].all()
+    assert 0 < val["base_rate"] < 1
 
 
 def test_duplicate_task_skipped_below_minimum(fixture_repo):

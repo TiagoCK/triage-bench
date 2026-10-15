@@ -146,3 +146,15 @@ def test_mention_fallback_only_when_unambiguous():
     }
     assert got == {(3, 1, "mention"), (6, 2, "comment")}
     assert stats["mention_ambiguous_or_none"] == 2
+
+
+def test_validation_is_the_end_of_train(fixture_repo):
+    cfg, repo_dir, meta = fixture_repo
+    issues = pd.read_parquet(repo_dir / "issues.parquet")
+    val = issues[issues["is_validation"]]
+    assert len(val) > 0
+    assert (val["split"] == "train").all()
+    start = cfg.cutoff - pd.DateOffset(months=cfg.validation_months)
+    assert (val["created_at"] >= start).all()
+    assert not issues.loc[issues["created_at"] < start, "is_validation"].any()
+    assert meta["validation"]["n_issues"] == len(val)

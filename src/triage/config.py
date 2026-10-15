@@ -20,6 +20,9 @@ class RepoConfig:
     creation_window_s: int = 60
     # Labels template-applied for more than this share of their train uses are not targets.
     max_creation_share: float = 0.5
+    # The last N months of the train period double as a validation set for choosing
+    # thresholds (e.g. the duplicate confidence gate), so nothing is tuned on test.
+    validation_months: int = 3
 
     @property
     def slug(self) -> str:
@@ -57,6 +60,7 @@ def load_repos(path: Path = Path("configs/repos.yaml")) -> list[RepoConfig]:
                 min_label_count=int(merged["min_label_count"]),
                 creation_window_s=int(merged.get("creation_window_s", 60)),
                 max_creation_share=float(merged.get("max_creation_share", 0.5)),
+                validation_months=int(merged.get("validation_months", 3)),
             )
         )
     return out

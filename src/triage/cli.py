@@ -94,6 +94,9 @@ def eval_(
     min_test_labeled: int = typer.Option(
         50, help="Skip the label task for repos with fewer labeled test issues than this."
     ),
+    with_validation: bool = typer.Option(
+        False, help="Also run the LLM duplicate judge on a validation sample (for gates)."
+    ),
     embed_model: str = typer.Option("BAAI/bge-small-en-v1.5"),
     reranker_model: str = typer.Option("BAAI/bge-reranker-base"),
     config: Path = typer.Option(Path("configs/repos.yaml")),
@@ -117,6 +120,8 @@ def eval_(
         bootstrap=bootstrap,
         min_test_duplicates=min_test_duplicates,
         min_test_labeled=min_test_labeled,
+        with_validation=with_validation,
+        predictions_dir=results.parent / "predictions",
         embed_model=embed_model,
         reranker_model=reranker_model,
     )
@@ -134,6 +139,40 @@ def eval_(
     run_log.write_text(json.dumps(rows, indent=2, default=str))
     _write_table(all_rows, results.parent / "table.md")
     typer.echo(f"{len(rows)} result rows; table at {results.parent / 'table.md'}")
+
+
+@app.command("analyze-gates")
+def analyze_gates(
+    repo: str = typer.Option(..., help="owner/name"),
+    models: str = typer.Option("haiku-sub,qwen3.5-9b", help="Comma-separated model keys."),
+    targets: str = typer.Option("0.5,0.8,0.9", help="Target precisions at the base rate."),
+    system: str = typer.Option(None, help="Judge system name; default: the only one found."),
+    bootstrap: int = typer.Option(1000),
+    seed: int = typer.Option(0),
+    results: Path = typer.Option(RESULTS),
+) -> None:
+    """Choose confidence-gate thresholds on validation and score them on test.
+
+    Reads saved judge predictions (from `triage eval ... --with-validation`); no model calls.
+    """
+    from triage.eval.gates import analyze
+    from triage.eval.run import merge_results
+
+    rows = analyze(
+        results.parent / "predictions",
+        repo,
+        [m for m in models.split(",") if m],
+        [float(t) for t in targets.split(",") if t],
+        system=system,
+        n_boot=bootstrap,
+        seed=seed,
+    )
+    stamp = datetime.now(UTC).isoformat(timespec="seconds")
+    for r in rows:
+        r["timestamp"] = stamp
+    all_rows = merge_results(results, rows)
+    _write_table(all_rows, results.parent / "table.md")
+    typer.echo(f"{len(rows)} gate rows; table at {results.parent / 'table.md'}")
 
 
 @app.command()
