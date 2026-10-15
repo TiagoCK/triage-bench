@@ -5,6 +5,75 @@ prediction** and **duplicate detection**, measured on real maintainer decisions 
 repositories. It compares classic baselines, dense retrieval, and LLMs (hosted Claude and
 local Ollama models through one interface) on quality, cost and latency.
 
+## Key findings
+
+Measured on microsoft/vscode (11,198 test issues, 603 test duplicates) and astral-sh/uv
+(972 test issues, 36 test duplicates). Brackets are 95% bootstrap confidence intervals. Full
+tables are in [results/table.md](results/table.md).
+
+**1. For finding duplicates, embeddings clearly beat keyword search, which clearly beats the
+approach most hobby bots use.** Share of duplicates whose original appears in the top 5
+results, on vscode:
+
+| System | Recall@5 |
+|---|---:|
+| difflib title matching | 0.29 [0.25, 0.33] |
+| BM25 keyword search | 0.39 [0.35, 0.42] |
+| Embeddings (bge-small) | **0.55** [0.51, 0.59] |
+| Embeddings + BM25 | 0.53 [0.49, 0.58] |
+
+None of the first three intervals overlap. Adding BM25 to embeddings gains nothing. uv shows
+the same order (difflib 0.17, embeddings 0.58), with wider intervals.
+
+**2. No system here can safely decide on its own that an issue is a duplicate.**
+- Similarity scores alone can't separate duplicates from new issues: average precision is
+  0.01-0.02 for every retriever on vscode, and at most 0.04 on uv.
+- An LLM judge on top of retrieval helps pick the right original. Both LLMs raise top-1
+  accuracy (vscode: 0.23 for retrieval alone, 0.35-0.39 with an LLM), though the intervals
+  overlap.
+- But both LLMs also flag many non-duplicates as duplicates:
+
+| False-duplicate rate (non-duplicates flagged) | vscode | uv |
+|---|---:|---:|
+| Qwen 3.5 9B (local, Ollama) | 0.48 [0.38, 0.58] | 0.56 [0.46, 0.65] |
+| Claude Haiku 5.5 | **0.17** [0.10, 0.24] | **0.34** [0.25, 0.43] |
+
+Haiku cuts false flags roughly threefold on vscode, and the intervals don't overlap on
+either repo. At each repo's real duplicate rate, though, only about 10% of Haiku's duplicate
+comments would be correct on vscode (4% on uv). A bot built on either model needs a
+confidence gate and a shadow period before it posts anything.
+
+**3. For labels, a classic TF-IDF classifier matches or beats both LLMs.** Micro F1 on the
+same 200 issues per repo:
+
+| System | uv | vscode |
+|---|---:|---:|
+| TF-IDF + logistic regression | **0.74** [0.69, 0.79] | **0.67** [0.62, 0.72] |
+| Haiku, 5 example issues | 0.55 [0.49, 0.61] | 0.65 [0.61, 0.70] |
+| Qwen, 5 example issues | 0.50 [0.44, 0.55] | 0.65 [0.61, 0.70] |
+| Haiku, label descriptions only | 0.46 [0.42, 0.50] | 0.57 [0.53, 0.61] |
+| Qwen, label descriptions only | 0.35 [0.31, 0.40] | 0.49 [0.44, 0.53] |
+
+Example issues help both LLMs a lot. Without them, Haiku beats Qwen. TF-IDF runs in
+milliseconds, while the LLMs take 1-5 seconds per issue, and Haiku costs an estimated
+$0.40-0.80 per 1,000 issues at API prices.
+
+**4. GitHub's own records are unreliable as ground truth, in specific ways.**
+- The `canonical` and `duplicate` fields of `MarkedAsDuplicateEvent` don't reliably say
+  which issue is the duplicate. On uv, `canonical` was always the issue the event was read
+  from. The first collector trusted those fields and found 7 duplicate pairs. Inferring
+  direction from close reasons, comments and creation order, reading full issue URLs in
+  "Duplicate of" comments, and searching uv's full history found 401.
+- Issue forms apply labels automatically. On huggingface/transformers, 1,608 of 1,619 `bug`
+  labels were added by the reporter within seconds of opening the issue, so predicting them
+  measures which form was picked, not triage.
+- Some repos barely record duplicates (transformers: 1 test duplicate; uv: 2-7 a month in
+  2026). transformers is collected but not scored on either task.
+
+Haiku rows ran through the Claude Code CLI on a subscription (`haiku-sub`); see
+[Running Claude on a subscription](#running-claude-on-a-subscription) for how that differs
+from a raw API call.
+
 ## Why
 
 Plenty of AI issue-triage tools already exist: Dosu (commercial), GitHub's own duplicate
