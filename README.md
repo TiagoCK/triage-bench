@@ -259,3 +259,9 @@ tests/                   unit, leakage, end-to-end smoke tests
 
 LiteLLM 1.82.7 and 1.82.8 on PyPI were backdoored in March 2026. `pyproject.toml` excludes
 them, and `uv.lock` pins exact versions with hashes. Install with `uv sync --locked`.
+
+## License
+
+MIT. See [LICENSE](LICENSE). The collected GitHub issue data is not part of this repository;
+`triage collect` downloads it from the GitHub API, and it remains subject to GitHub's terms
+and its authors' rights.
