@@ -1,0 +1,2328 @@
+{
+ "repo": "astral-sh/uv",
+ "system": "hybrid-bm25+bge-small-en-v1.5+llm",
+ "model": "haiku-sub",
+ "split": "validation",
+ "base_rate": 0.03776683087027915,
+ "sample": 200,
+ "seed": 0,
+ "items": [
+  {
+   "number": 16541,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    2153,
+    3164,
+    3341,
+    15267,
+    6793
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8480684757232666,
+   "sim_top2": 0.8471258282661438,
+   "gold": [
+    2500,
+    4434,
+    16122
+   ]
+  },
+  {
+   "number": 16424,
+   "is_dup": true,
+   "chosen": 7898,
+   "correct": false,
+   "confidence": 0.65,
+   "candidates": [
+    7898,
+    1578,
+    8072,
+    14873,
+    1625
+   ],
+   "sim_chosen": 0.8592262268066406,
+   "sim_top1": 0.864206075668335,
+   "sim_top2": 0.8614858388900757,
+   "gold": [
+    1495,
+    1578,
+    6413,
+    6501,
+    6504,
+    8830,
+    9254,
+    11476,
+    11773,
+    12146,
+    12740,
+    12821,
+    13457,
+    15960
+   ]
+  },
+  {
+   "number": 17246,
+   "is_dup": true,
+   "chosen": 15325,
+   "correct": true,
+   "confidence": 0.35,
+   "candidates": [
+    15325,
+    9158,
+    12630,
+    10707,
+    12183
+   ],
+   "sim_chosen": 0.8289116621017456,
+   "sim_top1": 0.8325592279434204,
+   "sim_top2": 0.8289116621017456,
+   "gold": [
+    15325
+   ]
+  },
+  {
+   "number": 16803,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14992,
+    14394,
+    16286,
+    7515,
+    5260
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8041001558303833,
+   "sim_top2": 0.7931631803512573,
+   "gold": [
+    14992
+   ]
+  },
+  {
+   "number": 17120,
+   "is_dup": true,
+   "chosen": 12256,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    12256,
+    11070,
+    5929,
+    6255,
+    3510
+   ],
+   "sim_chosen": 0.8547652363777161,
+   "sim_top1": 0.8547652363777161,
+   "sim_top2": 0.8466143012046814,
+   "gold": [
+    9754
+   ]
+  },
+  {
+   "number": 16122,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    2705,
+    11392,
+    7373,
+    15812,
+    11160
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.790235161781311,
+   "sim_top2": 0.7871021628379822,
+   "gold": [
+    2500,
+    4434
+   ]
+  },
+  {
+   "number": 16666,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8847,
+    12311,
+    16219,
+    14610,
+    10612
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7901278138160706,
+   "sim_top2": 0.7895283699035645,
+   "gold": [
+    10612
+   ]
+  },
+  {
+   "number": 17277,
+   "is_dup": true,
+   "chosen": 10751,
+   "correct": false,
+   "confidence": 0.93,
+   "candidates": [
+    10751,
+    17174,
+    10231,
+    9061,
+    11621
+   ],
+   "sim_chosen": 0.8431958556175232,
+   "sim_top1": 0.8431958556175232,
+   "sim_top2": 0.7861341238021851,
+   "gold": [
+    11886
+   ]
+  },
+  {
+   "number": 17003,
+   "is_dup": true,
+   "chosen": 12456,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    12456,
+    12193,
+    16102,
+    13638,
+    13550
+   ],
+   "sim_chosen": 0.8196507692337036,
+   "sim_top1": 0.8196507692337036,
+   "sim_top2": 0.8006888628005981,
+   "gold": [
+    12268
+   ]
+  },
+  {
+   "number": 16410,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6198,
+    16060,
+    7296,
+    16329,
+    3957
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8261274695396423,
+   "sim_top2": 0.822731614112854,
+   "gold": [
+    3163,
+    4809,
+    6006,
+    12009,
+    13263
+   ]
+  },
+  {
+   "number": 16376,
+   "is_dup": true,
+   "chosen": 7242,
+   "correct": true,
+   "confidence": 0.85,
+   "candidates": [
+    7242,
+    6533,
+    8431,
+    6461,
+    1550
+   ],
+   "sim_chosen": 0.8843158483505249,
+   "sim_top1": 0.9023982286453247,
+   "sim_top2": 0.8843158483505249,
+   "gold": [
+    7242,
+    10997
+   ]
+  },
+  {
+   "number": 17029,
+   "is_dup": true,
+   "chosen": 12190,
+   "correct": true,
+   "confidence": 0.72,
+   "candidates": [
+    12190,
+    11027,
+    16436,
+    6476,
+    14630
+   ],
+   "sim_chosen": 0.8716680407524109,
+   "sim_top1": 0.8875067234039307,
+   "sim_top2": 0.8828570246696472,
+   "gold": [
+    6794,
+    11027,
+    11300,
+    11509,
+    11679,
+    12190,
+    13632,
+    15383
+   ]
+  },
+  {
+   "number": 16358,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11222,
+    13131,
+    5556,
+    3357,
+    8932
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8274754881858826,
+   "sim_top2": 0.8172227144241333,
+   "gold": [
+    13640
+   ]
+  },
+  {
+   "number": 16195,
+   "is_dup": true,
+   "chosen": 15690,
+   "correct": true,
+   "confidence": 0.5,
+   "candidates": [
+    15690,
+    13610,
+    12743,
+    12855,
+    15667
+   ],
+   "sim_chosen": 0.7965466976165771,
+   "sim_top1": 0.8144088983535767,
+   "sim_top2": 0.7996755838394165,
+   "gold": [
+    15690
+   ]
+  },
+  {
+   "number": 16373,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12479,
+    2084,
+    11920,
+    13362,
+    12596
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7667388319969177,
+   "sim_top2": 0.7531095743179321,
+   "gold": [
+    1703,
+    9433,
+    9930
+   ]
+  },
+  {
+   "number": 17107,
+   "is_dup": true,
+   "chosen": 13250,
+   "correct": false,
+   "confidence": 0.9,
+   "candidates": [
+    13250,
+    14635,
+    8782,
+    16842,
+    11835
+   ],
+   "sim_chosen": 0.9118331074714661,
+   "sim_top1": 0.9252470135688782,
+   "sim_top2": 0.9118331074714661,
+   "gold": [
+    1910,
+    2887,
+    3118,
+    8782,
+    9918,
+    11835,
+    12147,
+    13275,
+    13725,
+    14635,
+    16842
+   ]
+  },
+  {
+   "number": 16413,
+   "is_dup": true,
+   "chosen": 13845,
+   "correct": false,
+   "confidence": 0.95,
+   "candidates": [
+    13845,
+    14574,
+    3196,
+    1927,
+    14151
+   ],
+   "sim_chosen": 0.96946781873703,
+   "sim_top1": 0.96946781873703,
+   "sim_top2": 0.8702757358551025,
+   "gold": [
+    14574
+   ]
+  },
+  {
+   "number": 16379,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16156,
+    15715,
+    9086,
+    15159,
+    13590
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8529305458068848,
+   "sim_top2": 0.8138204216957092,
+   "gold": [
+    14090
+   ]
+  },
+  {
+   "number": 17113,
+   "is_dup": true,
+   "chosen": 12789,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    12789,
+    3445,
+    12269,
+    8921,
+    16436
+   ],
+   "sim_chosen": 0.8762363791465759,
+   "sim_top1": 0.8936364650726318,
+   "sim_top2": 0.8762363791465759,
+   "gold": [
+    6794,
+    11027,
+    11300,
+    11509,
+    11679,
+    12190,
+    13632,
+    15383,
+    17029
+   ]
+  },
+  {
+   "number": 16239,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8764,
+    6360,
+    14085,
+    8097,
+    10839
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8254549503326416,
+   "sim_top2": 0.8163434267044067,
+   "gold": [
+    12303
+   ]
+  },
+  {
+   "number": 16110,
+   "is_dup": true,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    10167,
+    14954,
+    5851,
+    9233,
+    6336
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8764218091964722,
+   "sim_top2": 0.8697777986526489,
+   "gold": [
+    4604
+   ]
+  },
+  {
+   "number": 16842,
+   "is_dup": true,
+   "chosen": 11835,
+   "correct": true,
+   "confidence": 0.5,
+   "candidates": [
+    11835,
+    11092,
+    8118,
+    1698,
+    12147
+   ],
+   "sim_chosen": 0.8547059297561646,
+   "sim_top1": 0.861771821975708,
+   "sim_top2": 0.8609665632247925,
+   "gold": [
+    1910,
+    2887,
+    3118,
+    8782,
+    9918,
+    11835,
+    12147,
+    13275,
+    13725,
+    14635
+   ]
+  },
+  {
+   "number": 16631,
+   "is_dup": true,
+   "chosen": 15603,
+   "correct": true,
+   "confidence": 0.8,
+   "candidates": [
+    15603,
+    13830,
+    15457,
+    11458,
+    11092
+   ],
+   "sim_chosen": 0.8477701544761658,
+   "sim_top1": 0.8935110569000244,
+   "sim_top2": 0.8780068159103394,
+   "gold": [
+    15603
+   ]
+  },
+  {
+   "number": 16574,
+   "is_dup": false,
+   "chosen": 16545,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    16545,
+    14260,
+    14961,
+    7458,
+    11677
+   ],
+   "sim_chosen": 0.7416744828224182,
+   "sim_top1": 0.7711210250854492,
+   "sim_top2": 0.7573511600494385,
+   "gold": []
+  },
+  {
+   "number": 16256,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12809,
+    12128,
+    12074,
+    16042,
+    12461
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8271176815032959,
+   "sim_top2": 0.8179851770401001,
+   "gold": []
+  },
+  {
+   "number": 17153,
+   "is_dup": false,
+   "chosen": 12399,
+   "correct": false,
+   "confidence": 0.4,
+   "candidates": [
+    12399,
+    16336,
+    2257,
+    2014,
+    15179
+   ],
+   "sim_chosen": 0.7724844217300415,
+   "sim_top1": 0.7835190892219543,
+   "sim_top2": 0.7724844217300415,
+   "gold": []
+  },
+  {
+   "number": 16429,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16219,
+    12242,
+    11466,
+    15097,
+    13504
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8078101277351379,
+   "sim_top2": 0.7898974418640137,
+   "gold": []
+  },
+  {
+   "number": 16870,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11360,
+    9326,
+    7117,
+    8608,
+    13605
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8014577627182007,
+   "sim_top2": 0.7888166904449463,
+   "gold": []
+  },
+  {
+   "number": 16291,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    9587,
+    15043,
+    10850,
+    11276,
+    13368
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.849589467048645,
+   "sim_top2": 0.8421984910964966,
+   "gold": []
+  },
+  {
+   "number": 17138,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    15362,
+    13094,
+    15560,
+    8076,
+    5552
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8689107894897461,
+   "sim_top2": 0.8657759428024292,
+   "gold": []
+  },
+  {
+   "number": 16106,
+   "is_dup": false,
+   "chosen": 4450,
+   "correct": false,
+   "confidence": 0.5,
+   "candidates": [
+    4450,
+    14748,
+    13713,
+    12185,
+    15100
+   ],
+   "sim_chosen": 0.8684276938438416,
+   "sim_top1": 0.8684276938438416,
+   "sim_top2": 0.8623114824295044,
+   "gold": []
+  },
+  {
+   "number": 16186,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6749,
+    15896,
+    16148,
+    6242,
+    14401
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8670610189437866,
+   "sim_top2": 0.8324058055877686,
+   "gold": []
+  },
+  {
+   "number": 17103,
+   "is_dup": false,
+   "chosen": 16545,
+   "correct": false,
+   "confidence": 0.1,
+   "candidates": [
+    16545,
+    14992,
+    9443,
+    13704,
+    17070
+   ],
+   "sim_chosen": 0.7821186184883118,
+   "sim_top1": 0.8241391181945801,
+   "sim_top2": 0.8022947907447815,
+   "gold": []
+  },
+  {
+   "number": 17268,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12785,
+    7682,
+    15454,
+    6451,
+    12810
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7392785549163818,
+   "sim_top2": 0.7253101468086243,
+   "gold": []
+  },
+  {
+   "number": 16849,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    449,
+    8302,
+    12464,
+    9571,
+    6254
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7860695123672485,
+   "sim_top2": 0.7406230568885803,
+   "gold": []
+  },
+  {
+   "number": 17126,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8817,
+    10733,
+    16028,
+    8023,
+    8535
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8376328945159912,
+   "sim_top2": 0.8262960910797119,
+   "gold": []
+  },
+  {
+   "number": 16906,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12565,
+    14850,
+    12242,
+    15702,
+    16766
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8057512640953064,
+   "sim_top2": 0.8049188256263733,
+   "gold": []
+  },
+  {
+   "number": 16350,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8428,
+    13545,
+    6029,
+    14513,
+    10557
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7845489382743835,
+   "sim_top2": 0.7828942537307739,
+   "gold": []
+  },
+  {
+   "number": 17112,
+   "is_dup": false,
+   "chosen": 15508,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    15508,
+    12584,
+    14740,
+    15002,
+    15995
+   ],
+   "sim_chosen": 0.827994704246521,
+   "sim_top1": 0.8571609854698181,
+   "sim_top2": 0.851394534111023,
+   "gold": []
+  },
+  {
+   "number": 16408,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    2637,
+    12202,
+    7696,
+    11611,
+    6493
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8951233625411987,
+   "sim_top2": 0.8855769038200378,
+   "gold": []
+  },
+  {
+   "number": 17255,
+   "is_dup": false,
+   "chosen": 8069,
+   "correct": false,
+   "confidence": 0.8,
+   "candidates": [
+    8069,
+    16519,
+    6642,
+    13206,
+    8728
+   ],
+   "sim_chosen": 0.8218957781791687,
+   "sim_top1": 0.8218957781791687,
+   "sim_top2": 0.8076151013374329,
+   "gold": []
+  },
+  {
+   "number": 16116,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    2798,
+    2387,
+    13763,
+    2527,
+    12898
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8262647390365601,
+   "sim_top2": 0.8173449635505676,
+   "gold": []
+  },
+  {
+   "number": 17236,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14742,
+    16522,
+    12994,
+    15461,
+    9640
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8767512440681458,
+   "sim_top2": 0.8729404211044312,
+   "gold": []
+  },
+  {
+   "number": 16696,
+   "is_dup": false,
+   "chosen": 15237,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    15237,
+    9817,
+    6348,
+    6331,
+    14247
+   ],
+   "sim_chosen": 0.8839592933654785,
+   "sim_top1": 0.8917801976203918,
+   "sim_top2": 0.8839592933654785,
+   "gold": []
+  },
+  {
+   "number": 16732,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16352,
+    16587,
+    9393,
+    7396,
+    10381
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8526514172554016,
+   "sim_top2": 0.8481944799423218,
+   "gold": []
+  },
+  {
+   "number": 16968,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6377,
+    11273,
+    9762,
+    12891,
+    15427
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7716398239135742,
+   "sim_top2": 0.7648581862449646,
+   "gold": []
+  },
+  {
+   "number": 16766,
+   "is_dup": false,
+   "chosen": 13407,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    13407,
+    12242,
+    13546,
+    14850,
+    6321
+   ],
+   "sim_chosen": 0.8814212083816528,
+   "sim_top1": 0.8814212083816528,
+   "sim_top2": 0.8672288060188293,
+   "gold": []
+  },
+  {
+   "number": 16417,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14583,
+    15860,
+    12635,
+    15696,
+    7590
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8800675272941589,
+   "sim_top2": 0.8491624593734741,
+   "gold": []
+  },
+  {
+   "number": 16765,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    7718,
+    7326,
+    11655,
+    15372,
+    12646
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.834862232208252,
+   "sim_top2": 0.8151359558105469,
+   "gold": []
+  },
+  {
+   "number": 16914,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16015,
+    12152,
+    16913,
+    13986,
+    8097
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8662234544754028,
+   "sim_top2": 0.8344864249229431,
+   "gold": []
+  },
+  {
+   "number": 16423,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6321,
+    13415,
+    14451,
+    3742,
+    12242
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8229776620864868,
+   "sim_top2": 0.8165873885154724,
+   "gold": []
+  },
+  {
+   "number": 16786,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16289,
+    7126,
+    16200,
+    16180,
+    1684
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8549920320510864,
+   "sim_top2": 0.8477509021759033,
+   "gold": []
+  },
+  {
+   "number": 17024,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6833,
+    6525,
+    9754,
+    13674,
+    17003
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7981511354446411,
+   "sim_top2": 0.7950697541236877,
+   "gold": []
+  },
+  {
+   "number": 16513,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    10270,
+    14406,
+    12162,
+    12241,
+    15000
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8386052250862122,
+   "sim_top2": 0.8369174003601074,
+   "gold": []
+  },
+  {
+   "number": 17002,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11587,
+    10835,
+    5578,
+    11128,
+    12269
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8367108702659607,
+   "sim_top2": 0.8285231590270996,
+   "gold": []
+  },
+  {
+   "number": 16806,
+   "is_dup": false,
+   "chosen": 12523,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    12523,
+    15656,
+    14866,
+    15369,
+    9755
+   ],
+   "sim_chosen": 0.829230785369873,
+   "sim_top1": 0.856440544128418,
+   "sim_top2": 0.8346945643424988,
+   "gold": []
+  },
+  {
+   "number": 17017,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14826,
+    6797,
+    16640,
+    16285,
+    8373
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8376176953315735,
+   "sim_top2": 0.8267093896865845,
+   "gold": []
+  },
+  {
+   "number": 16519,
+   "is_dup": false,
+   "chosen": 15073,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    15073,
+    13580,
+    16309,
+    2585,
+    2770
+   ],
+   "sim_chosen": 0.8250836133956909,
+   "sim_top1": 0.8582255840301514,
+   "sim_top2": 0.843386173248291,
+   "gold": []
+  },
+  {
+   "number": 17089,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12663,
+    7018,
+    5815,
+    15384,
+    3560
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8449177145957947,
+   "sim_top2": 0.807400107383728,
+   "gold": []
+  },
+  {
+   "number": 16397,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8727,
+    2991,
+    15098,
+    11763,
+    15353
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8464820981025696,
+   "sim_top2": 0.8020968437194824,
+   "gold": []
+  },
+  {
+   "number": 17135,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8525,
+    12728,
+    14840,
+    13238,
+    12927
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8279393911361694,
+   "sim_top2": 0.796926736831665,
+   "gold": []
+  },
+  {
+   "number": 16314,
+   "is_dup": false,
+   "chosen": 15442,
+   "correct": false,
+   "confidence": 0.15,
+   "candidates": [
+    15442,
+    10082,
+    13177,
+    14951,
+    8131
+   ],
+   "sim_chosen": 0.793297290802002,
+   "sim_top1": 0.793297290802002,
+   "sim_top2": 0.7520445585250854,
+   "gold": []
+  },
+  {
+   "number": 17018,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14466,
+    15391,
+    7810,
+    10591,
+    11645
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8579304218292236,
+   "sim_top2": 0.8556612133979797,
+   "gold": []
+  },
+  {
+   "number": 16151,
+   "is_dup": false,
+   "chosen": 14577,
+   "correct": false,
+   "confidence": 0.55,
+   "candidates": [
+    14577,
+    14694,
+    7518,
+    9537,
+    12890
+   ],
+   "sim_chosen": 0.8482574820518494,
+   "sim_top1": 0.8482574820518494,
+   "sim_top2": 0.8323835134506226,
+   "gold": []
+  },
+  {
+   "number": 16381,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    9574,
+    13710,
+    13986,
+    16231,
+    14230
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8155522346496582,
+   "sim_top2": 0.7817485332489014,
+   "gold": []
+  },
+  {
+   "number": 16973,
+   "is_dup": false,
+   "chosen": 12468,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    12468,
+    13417,
+    12777,
+    1598,
+    13986
+   ],
+   "sim_chosen": 0.8040660619735718,
+   "sim_top1": 0.8045779466629028,
+   "sim_top2": 0.8040660619735718,
+   "gold": []
+  },
+  {
+   "number": 16145,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12660,
+    13972,
+    12009,
+    15123,
+    12664
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8218812942504883,
+   "sim_top2": 0.7833634614944458,
+   "gold": []
+  },
+  {
+   "number": 16391,
+   "is_dup": false,
+   "chosen": 2607,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    2607,
+    3061,
+    6319,
+    7403,
+    8046
+   ],
+   "sim_chosen": 0.7911982536315918,
+   "sim_top1": 0.8201816082000732,
+   "sim_top2": 0.8189934492111206,
+   "gold": []
+  },
+  {
+   "number": 16610,
+   "is_dup": false,
+   "chosen": 8178,
+   "correct": false,
+   "confidence": 0.15,
+   "candidates": [
+    8178,
+    12046,
+    16049,
+    9703,
+    7782
+   ],
+   "sim_chosen": 0.8104437589645386,
+   "sim_top1": 0.8240859508514404,
+   "sim_top2": 0.8135297894477844,
+   "gold": []
+  },
+  {
+   "number": 16630,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    13541,
+    15414,
+    15408,
+    6926,
+    7228
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8344431519508362,
+   "sim_top2": 0.825762152671814,
+   "gold": []
+  },
+  {
+   "number": 16084,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11883,
+    14004,
+    3272,
+    12654,
+    12562
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8112006783485413,
+   "sim_top2": 0.7748098969459534,
+   "gold": []
+  },
+  {
+   "number": 16951,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    13126,
+    10522,
+    9911,
+    12646,
+    15789
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8754779696464539,
+   "sim_top2": 0.8746009469032288,
+   "gold": []
+  },
+  {
+   "number": 16929,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    9137,
+    14114,
+    13023,
+    15729,
+    13928
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7783176898956299,
+   "sim_top2": 0.755936324596405,
+   "gold": []
+  },
+  {
+   "number": 16180,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    6867,
+    6451,
+    15586,
+    10023,
+    11010
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8484724760055542,
+   "sim_top2": 0.8443868160247803,
+   "gold": []
+  },
+  {
+   "number": 16247,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    9479,
+    13749,
+    12442,
+    13664,
+    14093
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.832156777381897,
+   "sim_top2": 0.8097121119499207,
+   "gold": []
+  },
+  {
+   "number": 17209,
+   "is_dup": false,
+   "chosen": 13788,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    13788,
+    6356,
+    6935,
+    17154,
+    13589
+   ],
+   "sim_chosen": 0.820311427116394,
+   "sim_top1": 0.8360589146614075,
+   "sim_top2": 0.83256596326828,
+   "gold": []
+  },
+  {
+   "number": 16741,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8450,
+    16200,
+    15560,
+    10661,
+    8460
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8415068984031677,
+   "sim_top2": 0.8357378244400024,
+   "gold": []
+  },
+  {
+   "number": 16733,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12042,
+    7003,
+    2563,
+    3291,
+    8840
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8523976802825928,
+   "sim_top2": 0.8489781618118286,
+   "gold": []
+  },
+  {
+   "number": 16819,
+   "is_dup": false,
+   "chosen": 15995,
+   "correct": false,
+   "confidence": 0.1,
+   "candidates": [
+    15995,
+    14841,
+    6963,
+    12900,
+    15403
+   ],
+   "sim_chosen": 0.8691948056221008,
+   "sim_top1": 0.8898544907569885,
+   "sim_top2": 0.8691948056221008,
+   "gold": []
+  },
+  {
+   "number": 16711,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    7637,
+    4096,
+    7270,
+    12340,
+    13819
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8560093641281128,
+   "sim_top2": 0.8461403846740723,
+   "gold": []
+  },
+  {
+   "number": 16324,
+   "is_dup": false,
+   "chosen": 16106,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    16106,
+    13713,
+    10711,
+    4450,
+    11529
+   ],
+   "sim_chosen": 0.8661311268806458,
+   "sim_top1": 0.9110657572746277,
+   "sim_top2": 0.8969831466674805,
+   "gold": []
+  },
+  {
+   "number": 16104,
+   "is_dup": false,
+   "chosen": 2962,
+   "correct": false,
+   "confidence": 0.7,
+   "candidates": [
+    2962,
+    15146,
+    3516,
+    10425,
+    14033
+   ],
+   "sim_chosen": 0.8716408014297485,
+   "sim_top1": 0.8716408014297485,
+   "sim_top2": 0.8692208528518677,
+   "gold": []
+  },
+  {
+   "number": 16996,
+   "is_dup": false,
+   "chosen": 9772,
+   "correct": false,
+   "confidence": 0.8,
+   "candidates": [
+    9772,
+    5226,
+    7617,
+    9395,
+    9214
+   ],
+   "sim_chosen": 0.8375416398048401,
+   "sim_top1": 0.8422366380691528,
+   "sim_top2": 0.8420920968055725,
+   "gold": []
+  },
+  {
+   "number": 16209,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    13350,
+    16015,
+    14472,
+    11048,
+    11962
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7956095933914185,
+   "sim_top2": 0.7720305323600769,
+   "gold": []
+  },
+  {
+   "number": 16484,
+   "is_dup": false,
+   "chosen": 15894,
+   "correct": false,
+   "confidence": 0.75,
+   "candidates": [
+    15894,
+    11090,
+    9073,
+    11949,
+    16068
+   ],
+   "sim_chosen": 0.8609268069267273,
+   "sim_top1": 0.8609268069267273,
+   "sim_top2": 0.8468599319458008,
+   "gold": []
+  },
+  {
+   "number": 16470,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12601,
+    12600,
+    13932,
+    13197,
+    11776
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8241751194000244,
+   "sim_top2": 0.8131303191184998,
+   "gold": []
+  },
+  {
+   "number": 16703,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12902,
+    16412,
+    7682,
+    12871,
+    2020
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8413815498352051,
+   "sim_top2": 0.80640709400177,
+   "gold": []
+  },
+  {
+   "number": 16893,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12424,
+    13819,
+    13867,
+    4714,
+    14248
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8369337916374207,
+   "sim_top2": 0.822810173034668,
+   "gold": []
+  },
+  {
+   "number": 16134,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    10847,
+    13087,
+    11838,
+    8124,
+    10663
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8439562320709229,
+   "sim_top2": 0.8378984928131104,
+   "gold": []
+  },
+  {
+   "number": 16471,
+   "is_dup": false,
+   "chosen": 9942,
+   "correct": false,
+   "confidence": 0.2,
+   "candidates": [
+    9942,
+    9854,
+    14289,
+    11776,
+    10360
+   ],
+   "sim_chosen": 0.8154310584068298,
+   "sim_top1": 0.841742992401123,
+   "sim_top2": 0.8397982716560364,
+   "gold": []
+  },
+  {
+   "number": 17023,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    13694,
+    15280,
+    8460,
+    16200,
+    6451
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8891420364379883,
+   "sim_top2": 0.870209813117981,
+   "gold": []
+  },
+  {
+   "number": 16934,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    15454,
+    16289,
+    13365,
+    8580,
+    1799
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7710272073745728,
+   "sim_top2": 0.7560120820999146,
+   "gold": []
+  },
+  {
+   "number": 16581,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16186,
+    6749,
+    7247,
+    13713,
+    3964
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8242647647857666,
+   "sim_top2": 0.8221691250801086,
+   "gold": []
+  },
+  {
+   "number": 16545,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    3405,
+    12766,
+    12929,
+    11180,
+    12940
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8098719120025635,
+   "sim_top2": 0.800240159034729,
+   "gold": []
+  },
+  {
+   "number": 17160,
+   "is_dup": false,
+   "chosen": 5716,
+   "correct": false,
+   "confidence": 0.55,
+   "candidates": [
+    5716,
+    15907,
+    12526,
+    11349,
+    14580
+   ],
+   "sim_chosen": 0.8392807841300964,
+   "sim_top1": 0.8879547715187073,
+   "sim_top2": 0.8476479053497314,
+   "gold": []
+  },
+  {
+   "number": 16974,
+   "is_dup": false,
+   "chosen": 16196,
+   "correct": false,
+   "confidence": 0.92,
+   "candidates": [
+    16196,
+    5790,
+    6846,
+    7398,
+    12000
+   ],
+   "sim_chosen": 0.8598911762237549,
+   "sim_top1": 0.8598911762237549,
+   "sim_top2": 0.8281711339950562,
+   "gold": []
+  },
+  {
+   "number": 16107,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11673,
+    12812,
+    15806,
+    13987,
+    15329
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8144921660423279,
+   "sim_top2": 0.8041532039642334,
+   "gold": []
+  },
+  {
+   "number": 17225,
+   "is_dup": false,
+   "chosen": 13861,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    13861,
+    3205,
+    2055,
+    3279,
+    12716
+   ],
+   "sim_chosen": 0.8481394052505493,
+   "sim_top1": 0.8481394052505493,
+   "sim_top2": 0.8420683145523071,
+   "gold": []
+  },
+  {
+   "number": 16334,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    8856,
+    10003,
+    12193,
+    8851,
+    14155
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8115688562393188,
+   "sim_top2": 0.8074768781661987,
+   "gold": []
+  },
+  {
+   "number": 16527,
+   "is_dup": false,
+   "chosen": 11645,
+   "correct": false,
+   "confidence": 0.2,
+   "candidates": [
+    11645,
+    14468,
+    11027,
+    11779,
+    14983
+   ],
+   "sim_chosen": 0.8196496367454529,
+   "sim_top1": 0.8344513177871704,
+   "sim_top2": 0.8204483985900879,
+   "gold": []
+  },
+  {
+   "number": 16716,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12270,
+    6509,
+    8891,
+    7472,
+    6700
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8181438446044922,
+   "sim_top2": 0.8114147186279297,
+   "gold": []
+  },
+  {
+   "number": 17279,
+   "is_dup": false,
+   "chosen": 16188,
+   "correct": false,
+   "confidence": 0.55,
+   "candidates": [
+    16188,
+    13433,
+    11060,
+    16354,
+    12765
+   ],
+   "sim_chosen": 0.9660490155220032,
+   "sim_top1": 0.9660490155220032,
+   "sim_top2": 0.7880358695983887,
+   "gold": []
+  },
+  {
+   "number": 16228,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    12626,
+    1355,
+    2475,
+    13504,
+    9922
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8022559881210327,
+   "sim_top2": 0.7953676581382751,
+   "gold": []
+  },
+  {
+   "number": 16101,
+   "is_dup": false,
+   "chosen": 10570,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    10570,
+    16043,
+    13870,
+    12730,
+    1549
+   ],
+   "sim_chosen": 0.8110602498054504,
+   "sim_top1": 0.8178852796554565,
+   "sim_top2": 0.811874508857727,
+   "gold": []
+  },
+  {
+   "number": 16875,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16037,
+    13114,
+    7637,
+    11631,
+    4204
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8200922012329102,
+   "sim_top2": 0.7669442296028137,
+   "gold": []
+  },
+  {
+   "number": 17173,
+   "is_dup": false,
+   "chosen": 16545,
+   "correct": false,
+   "confidence": 0.8,
+   "candidates": [
+    16545,
+    16574,
+    3405,
+    11180,
+    9443
+   ],
+   "sim_chosen": 0.9252173900604248,
+   "sim_top1": 0.9252173900604248,
+   "sim_top2": 0.8388526439666748,
+   "gold": []
+  },
+  {
+   "number": 16514,
+   "is_dup": false,
+   "chosen": 16299,
+   "correct": false,
+   "confidence": 0.75,
+   "candidates": [
+    16299,
+    13111,
+    3965,
+    13060,
+    6684
+   ],
+   "sim_chosen": 0.9071682095527649,
+   "sim_top1": 0.9071682095527649,
+   "sim_top2": 0.868851900100708,
+   "gold": []
+  },
+  {
+   "number": 16685,
+   "is_dup": false,
+   "chosen": 11406,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    11406,
+    14237,
+    9353,
+    9295,
+    11558
+   ],
+   "sim_chosen": 0.8836069703102112,
+   "sim_top1": 0.8978211879730225,
+   "sim_top2": 0.8948307037353516,
+   "gold": []
+  },
+  {
+   "number": 16761,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11694,
+    16008,
+    16112,
+    16105,
+    13605
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8385784029960632,
+   "sim_top2": 0.8271298408508301,
+   "gold": []
+  },
+  {
+   "number": 16596,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    7227,
+    16438,
+    10216,
+    16506,
+    10482
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8712368011474609,
+   "sim_top2": 0.8264992833137512,
+   "gold": []
+  },
+  {
+   "number": 16597,
+   "is_dup": false,
+   "chosen": 13973,
+   "correct": false,
+   "confidence": 0.3,
+   "candidates": [
+    13973,
+    14806,
+    11708,
+    9775,
+    12004
+   ],
+   "sim_chosen": 0.8260402083396912,
+   "sim_top1": 0.8582978844642639,
+   "sim_top2": 0.8578605055809021,
+   "gold": []
+  },
+  {
+   "number": 17168,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14436,
+    274,
+    2134,
+    10275,
+    15318
+   ],
+   "sim_chosen": null,
+   "sim_top1": 1.0000001192092896,
+   "sim_top2": 0.6280132532119751,
+   "gold": []
+  },
+  {
+   "number": 16409,
+   "is_dup": false,
+   "chosen": 10898,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    10898,
+    10978,
+    10285,
+    10284,
+    3905
+   ],
+   "sim_chosen": 0.8636473417282104,
+   "sim_top1": 0.8636473417282104,
+   "sim_top2": 0.8546932935714722,
+   "gold": []
+  },
+  {
+   "number": 17014,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    13594,
+    13830,
+    11795,
+    15383,
+    5552
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8607416152954102,
+   "sim_top2": 0.8556661605834961,
+   "gold": []
+  },
+  {
+   "number": 17197,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    10591,
+    15529,
+    12629,
+    14468,
+    15384
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.851689338684082,
+   "sim_top2": 0.8397970199584961,
+   "gold": []
+  },
+  {
+   "number": 16189,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    11557,
+    12233,
+    9626,
+    11505,
+    14963
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.7912930250167847,
+   "sim_top2": 0.7881656885147095,
+   "gold": []
+  },
+  {
+   "number": 16253,
+   "is_dup": false,
+   "chosen": 15739,
+   "correct": false,
+   "confidence": 0.6,
+   "candidates": [
+    15739,
+    13939,
+    13830,
+    12983,
+    1957
+   ],
+   "sim_chosen": 0.848003089427948,
+   "sim_top1": 0.848003089427948,
+   "sim_top2": 0.8351211547851562,
+   "gold": []
+  },
+  {
+   "number": 16821,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16506,
+    16751,
+    14845,
+    8779,
+    15655
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8247703909873962,
+   "sim_top2": 0.8168894052505493,
+   "gold": []
+  },
+  {
+   "number": 16551,
+   "is_dup": false,
+   "chosen": 10153,
+   "correct": false,
+   "confidence": 0.5,
+   "candidates": [
+    10153,
+    11694,
+    14666,
+    6909,
+    16112
+   ],
+   "sim_chosen": 0.84807950258255,
+   "sim_top1": 0.8502103090286255,
+   "sim_top2": 0.84807950258255,
+   "gold": []
+  },
+  {
+   "number": 16329,
+   "is_dup": false,
+   "chosen": 13299,
+   "correct": false,
+   "confidence": 0.7,
+   "candidates": [
+    13299,
+    7005,
+    15310,
+    11865,
+    12721
+   ],
+   "sim_chosen": 0.9046027660369873,
+   "sim_top1": 0.9046027660369873,
+   "sim_top2": 0.8732683062553406,
+   "gold": []
+  },
+  {
+   "number": 16621,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    16352,
+    4539,
+    13660,
+    11605,
+    8563
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.905495285987854,
+   "sim_top2": 0.8922047019004822,
+   "gold": []
+  },
+  {
+   "number": 17044,
+   "is_dup": false,
+   "chosen": null,
+   "correct": false,
+   "confidence": 0.0,
+   "candidates": [
+    14443,
+    10793,
+    8321,
+    9397,
+    9772
+   ],
+   "sim_chosen": null,
+   "sim_top1": 0.8635266423225403,
+   "sim_top2": 0.8276932835578918,
+   "gold": []
+  },
+  {
+   "number": 17136,
+   "is_dup": false,
+   "chosen": 15461,
+   "correct": false,
+   "confidence": 0.35,
+   "candidates": [
+    15461,
+    12994,
+    16522,
+    16917,
+    12357
+   ],
+   "sim_chosen": 0.7923249006271362,
+   "sim_top1": 0.8239876627922058,
+   "sim_top2": 0.8180996179580688,
+   "gold": []
+  }
+ ]
+}

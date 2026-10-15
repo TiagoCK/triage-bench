@@ -45,6 +45,24 @@ either repo. At each repo's real duplicate rate, though, only about 10% of Haiku
 comments would be correct on vscode (4% on uv). A bot built on either model needs a
 confidence gate and a shadow period before it posts anything.
 
+**A confidence gate doesn't fix this, as far as the recorded ground truth can tell.** Each
+gate's threshold was chosen on a validation sample (the last 3 months before the test period)
+and then applied once to test. No gate built on Haiku's stated confidence, embedding
+similarity, or a learned combination reaches even 50% precision at the real duplicate rate.
+The best any threshold manages on validation is 22% (vscode) and 4% (uv). Haiku's confidence
+is also poorly calibrated: on vscode, its calls stated at 0.8-1.0 confidence are correct 22%
+of the time. Two caveats:
+- **Choosing thresholds on test would have faked a result.** On vscode's test set, a 0.93
+  confidence cutoff looks like 83% precision, from 5 correct calls out of 6. Nothing like it
+  appears on validation.
+- **The recorded duplicates undercount correct calls, so these numbers are a lower bound.**
+  About half of Haiku's flags on real duplicates name a different original than the one
+  maintainers linked. Many are plausibly the same bug. For example, "Cannot create new
+  profile from Python Template" was matched to "Creating a new Profile from Python template
+  silently fails", but a maintainer had linked it elsewhere. Maintainers link each duplicate
+  to one issue, and the others never get recorded. Measuring true precision needs a
+  human-checked sample.
+
 **3. For labels, a classic TF-IDF classifier matches or beats both LLMs.** Micro F1 on the
 same 200 issues per repo:
 

@@ -1,5 +1,53 @@
 [
   {
+    "task": "calibration",
+    "subset": "test",
+    "system": "llm-confidence",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "n": 60.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "ece": 0.5168995064614584,
+    "bins": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 5,
+        "mean_confidence": 0.11400000000000002,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 9,
+        "mean_confidence": 0.3222222222222222,
+        "accuracy": 0.029806259314456043
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 6,
+        "mean_confidence": 0.4583333333333333,
+        "accuracy": 0.021052631578947375
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 15,
+        "mean_confidence": 0.6466666666666665,
+        "accuracy": 0.03685503685503686
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 25,
+        "mean_confidence": 0.8472,
+        "accuracy": 0.08333333333333336
+      }
+    ],
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
     "task": "duplicates",
     "subset": "full",
     "system": "bm25",
@@ -161,7 +209,7 @@
       0.0
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-15T00:29:27+00:00"
+    "timestamp": "2026-10-15T04:22:47+00:00"
   },
   {
     "task": "duplicates",
@@ -318,7 +366,7 @@
       0.5935185185185186
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-15T00:29:27+00:00"
+    "timestamp": "2026-10-15T04:22:47+00:00"
   },
   {
     "task": "duplicates",
@@ -362,13 +410,13 @@
     "p50_latency_s": 1.6185,
     "p95_latency_s": 3.65725,
     "usd_per_1k": 0.7598669117647059,
-    "cache_hit_rate": 0.0,
+    "cache_hit_rate": 1.0,
     "resolved_models": [
       "claude-haiku-5-5"
     ],
     "failures": 0,
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-15T00:29:27+00:00"
+    "timestamp": "2026-10-15T04:22:47+00:00"
   },
   {
     "task": "duplicates",
@@ -445,6 +493,114 @@
     ],
     "repo": "astral-sh/uv",
     "timestamp": "2026-10-13T21:54:00+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.5,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.5,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.5,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.8,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.8,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.8,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.9,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.9,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "astral-sh/uv",
+    "target": 0.9,
+    "n": 136.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:05+00:00"
   },
   {
     "task": "labels",
@@ -653,6 +809,54 @@
     "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
+    "task": "calibration",
+    "subset": "test",
+    "system": "llm-confidence",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "n": 78.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "ece": 0.5324811748816297,
+    "bins": [
+      {
+        "lo": 0.0,
+        "hi": 0.2,
+        "n": 1,
+        "mean_confidence": 0.1,
+        "accuracy": 0.0
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.4,
+        "n": 6,
+        "mean_confidence": 0.3083333333333333,
+        "accuracy": 0.02680238243399413
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 5,
+        "mean_confidence": 0.48,
+        "accuracy": 0.048414291449217176
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 29,
+        "mean_confidence": 0.6317241379310347,
+        "accuracy": 0.05297373275937802
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 37,
+        "mean_confidence": 0.8616216216216216,
+        "accuracy": 0.22083867423548803
+      }
+    ],
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
     "task": "duplicates",
     "subset": "full",
     "system": "bm25",
@@ -814,7 +1018,7 @@
       0.0
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-15T00:17:39+00:00"
+    "timestamp": "2026-10-15T04:19:52+00:00"
   },
   {
     "task": "duplicates",
@@ -930,7 +1134,7 @@
       0.40884821428571433
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-15T00:17:39+00:00"
+    "timestamp": "2026-10-15T04:19:52+00:00"
   },
   {
     "task": "duplicates",
@@ -974,13 +1178,13 @@
     "p50_latency_s": 1.592,
     "p95_latency_s": 3.0619999999999994,
     "usd_per_1k": 0.7765605000000001,
-    "cache_hit_rate": 0.0,
+    "cache_hit_rate": 1.0,
     "resolved_models": [
       "claude-haiku-5-5"
     ],
     "failures": 0,
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-15T00:17:39+00:00"
+    "timestamp": "2026-10-15T04:19:52+00:00"
   },
   {
     "task": "duplicates",
@@ -1028,6 +1232,114 @@
     "failures": 0,
     "repo": "microsoft/vscode",
     "timestamp": "2026-10-14T00:28:12+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.5,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.5,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.5",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.5,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.8,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.8,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.8",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.8,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:learned",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.9,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:llm-confidence",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.9,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
+  },
+  {
+    "task": "duplicates-gated",
+    "subset": "target P@base>=0.9",
+    "system": "gate:similarity",
+    "model": "haiku-sub",
+    "repo": "microsoft/vscode",
+    "target": 0.9,
+    "n": 200.0,
+    "judge": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "threshold": null,
+    "timestamp": "2026-10-15T04:23:04+00:00"
   },
   {
     "task": "labels",
