@@ -1,5 +1,7 @@
 # triage-bench
 
+[![ci](https://github.com/TiagoCK/triage-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/TiagoCK/triage-bench/actions/workflows/ci.yml)
+
 An open, time-split benchmark and evaluation harness for GitHub issue triage: **label
 prediction** and **duplicate detection**, measured on real maintainer decisions from public
 repositories. It compares classic baselines, dense retrieval, and LLMs (hosted Claude and
