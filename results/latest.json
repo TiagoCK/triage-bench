@@ -161,7 +161,7 @@
       0.0
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-13T22:50:04+00:00"
+    "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
     "task": "duplicates",
@@ -318,7 +318,57 @@
       0.5935185185185186
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-13T22:50:04+00:00"
+    "timestamp": "2026-10-15T00:29:27+00:00"
+  },
+  {
+    "task": "duplicates",
+    "subset": "sample200-seed0",
+    "system": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "model": "haiku-sub",
+    "recall@1": 0.4444444444444444,
+    "recall@5": 0.5833333333333334,
+    "recall@10": 0.5833333333333334,
+    "mrr@10": 0.5138888888888888,
+    "n": 36.0,
+    "precision": 0.25,
+    "recall": 0.4166666666666667,
+    "f1": 0.3125,
+    "false_dup_rate": 0.34,
+    "precision@base_rate": 0.043834015195791935,
+    "recall@1_ci": [
+      0.2777777777777778,
+      0.6111111111111112
+    ],
+    "recall@5_ci": [
+      0.4166666666666667,
+      0.7222222222222222
+    ],
+    "mrr@10_ci": [
+      0.3611111111111111,
+      0.6527777777777778
+    ],
+    "recall_ci": [
+      0.25,
+      0.5562499999999994
+    ],
+    "false_dup_rate_ci": [
+      0.25,
+      0.43
+    ],
+    "precision@base_rate_ci": [
+      0.0256601493017118,
+      0.06449680985971308
+    ],
+    "p50_latency_s": 1.6185,
+    "p95_latency_s": 3.65725,
+    "usd_per_1k": 0.7598669117647059,
+    "cache_hit_rate": 0.0,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "astral-sh/uv",
+    "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
     "task": "duplicates",
@@ -424,7 +474,45 @@
       0.783068783068783
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-14T02:00:23+00:00"
+    "timestamp": "2026-10-15T00:29:27+00:00"
+  },
+  {
+    "task": "labels",
+    "subset": "sample200-seed0",
+    "system": "llm-fewshot",
+    "model": "haiku-sub",
+    "micro_precision": 0.4891304347826087,
+    "micro_recall": 0.6338028169014085,
+    "micro_f1": 0.5521472392638037,
+    "macro_f1": 0.28043042452245853,
+    "exact_match": 0.445,
+    "n": 200.0,
+    "micro_f1_ci": [
+      0.4929564046125037,
+      0.6105351244219335
+    ],
+    "macro_f1_ci": [
+      0.23397162199709032,
+      0.3421631057956246
+    ],
+    "micro_precision_ci": [
+      0.43156533575317607,
+      0.5468806612318841
+    ],
+    "micro_recall_ci": [
+      0.5661903085392396,
+      0.6971293604651162
+    ],
+    "p50_latency_s": 1.3695,
+    "p95_latency_s": 2.9495999999999993,
+    "usd_per_1k": 0.6527565000000001,
+    "cache_hit_rate": 0.0,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "astral-sh/uv",
+    "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
     "task": "labels",
@@ -460,6 +548,44 @@
     "failures": 0,
     "repo": "astral-sh/uv",
     "timestamp": "2026-10-14T02:00:23+00:00"
+  },
+  {
+    "task": "labels",
+    "subset": "sample200-seed0",
+    "system": "llm-zeroshot",
+    "model": "haiku-sub",
+    "micro_precision": 0.349009900990099,
+    "micro_recall": 0.6619718309859155,
+    "micro_f1": 0.45705024311183134,
+    "macro_f1": 0.23109800307155334,
+    "exact_match": 0.045,
+    "n": 200.0,
+    "micro_f1_ci": [
+      0.41507296818709166,
+      0.5024003864734299
+    ],
+    "macro_f1_ci": [
+      0.20242915623992278,
+      0.27953464910907244
+    ],
+    "micro_precision_ci": [
+      0.31591395432476177,
+      0.385
+    ],
+    "micro_recall_ci": [
+      0.6,
+      0.7268292682926829
+    ],
+    "p50_latency_s": 1.3054999999999999,
+    "p95_latency_s": 2.973099999999999,
+    "usd_per_1k": 0.41710700000000006,
+    "cache_hit_rate": 0.1,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "astral-sh/uv",
+    "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
     "task": "labels",
@@ -524,7 +650,7 @@
       0.827768200581668
     ],
     "repo": "astral-sh/uv",
-    "timestamp": "2026-10-14T02:00:23+00:00"
+    "timestamp": "2026-10-15T00:29:27+00:00"
   },
   {
     "task": "duplicates",
@@ -688,7 +814,7 @@
       0.0
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-14T00:28:12+00:00"
+    "timestamp": "2026-10-15T00:17:39+00:00"
   },
   {
     "task": "duplicates",
@@ -804,7 +930,57 @@
       0.40884821428571433
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-14T00:28:12+00:00"
+    "timestamp": "2026-10-15T00:17:39+00:00"
+  },
+  {
+    "task": "duplicates",
+    "subset": "sample200-seed0",
+    "system": "hybrid-bm25+bge-small-en-v1.5+llm",
+    "model": "haiku-sub",
+    "recall@1": 0.35,
+    "recall@5": 0.49,
+    "recall@10": 0.49,
+    "mrr@10": 0.4031666666666666,
+    "n": 100.0,
+    "precision": 0.4230769230769231,
+    "recall": 0.33,
+    "f1": 0.37078651685393255,
+    "false_dup_rate": 0.17,
+    "precision@base_rate": 0.09589232533708567,
+    "recall@1_ci": [
+      0.25975000000000026,
+      0.44
+    ],
+    "recall@5_ci": [
+      0.39,
+      0.59
+    ],
+    "mrr@10_ci": [
+      0.31114583333333334,
+      0.4900333333333333
+    ],
+    "recall_ci": [
+      0.24,
+      0.42
+    ],
+    "false_dup_rate_ci": [
+      0.1,
+      0.24024999999999977
+    ],
+    "precision@base_rate_ci": [
+      0.06177604107730599,
+      0.1527669010554442
+    ],
+    "p50_latency_s": 1.592,
+    "p95_latency_s": 3.0619999999999994,
+    "usd_per_1k": 0.7765605000000001,
+    "cache_hit_rate": 0.0,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "microsoft/vscode",
+    "timestamp": "2026-10-15T00:17:39+00:00"
   },
   {
     "task": "duplicates",
@@ -881,7 +1057,45 @@
       0.6950137691500132
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-14T02:19:40+00:00"
+    "timestamp": "2026-10-15T00:17:39+00:00"
+  },
+  {
+    "task": "labels",
+    "subset": "sample200-seed0",
+    "system": "llm-fewshot",
+    "model": "haiku-sub",
+    "micro_precision": 0.5900621118012422,
+    "micro_recall": 0.7335907335907336,
+    "micro_f1": 0.6540447504302926,
+    "macro_f1": 0.3932277663856611,
+    "exact_match": 0.41,
+    "n": 200.0,
+    "micro_f1_ci": [
+      0.6060553903927397,
+      0.6983091271330812
+    ],
+    "macro_f1_ci": [
+      0.3262973503344938,
+      0.4397773329581942
+    ],
+    "micro_precision_ci": [
+      0.5432098765432098,
+      0.6357900776479153
+    ],
+    "micro_recall_ci": [
+      0.6784279525763794,
+      0.7838045738045738
+    ],
+    "p50_latency_s": 1.3904999999999998,
+    "p95_latency_s": 2.9468,
+    "usd_per_1k": 0.618609,
+    "cache_hit_rate": 0.0,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "microsoft/vscode",
+    "timestamp": "2026-10-15T00:17:39+00:00"
   },
   {
     "task": "labels",
@@ -917,6 +1131,44 @@
     "failures": 0,
     "repo": "microsoft/vscode",
     "timestamp": "2026-10-14T02:19:40+00:00"
+  },
+  {
+    "task": "labels",
+    "subset": "sample200-seed0",
+    "system": "llm-zeroshot",
+    "model": "haiku-sub",
+    "micro_precision": 0.4643734643734644,
+    "micro_recall": 0.7297297297297297,
+    "micro_f1": 0.5675675675675677,
+    "macro_f1": 0.37813969851920515,
+    "exact_match": 0.14,
+    "n": 200.0,
+    "micro_f1_ci": [
+      0.527104375586177,
+      0.6079094031793038
+    ],
+    "macro_f1_ci": [
+      0.30983585702472116,
+      0.4263558365208045
+    ],
+    "micro_precision_ci": [
+      0.42857142857142855,
+      0.5
+    ],
+    "micro_recall_ci": [
+      0.6754175749830865,
+      0.7854474548440066
+    ],
+    "p50_latency_s": 1.1115,
+    "p95_latency_s": 2.99135,
+    "usd_per_1k": 0.3864,
+    "cache_hit_rate": 0.0,
+    "resolved_models": [
+      "claude-haiku-5-5"
+    ],
+    "failures": 0,
+    "repo": "microsoft/vscode",
+    "timestamp": "2026-10-15T00:17:39+00:00"
   },
   {
     "task": "labels",
@@ -981,6 +1233,6 @@
       0.7325647967335345
     ],
     "repo": "microsoft/vscode",
-    "timestamp": "2026-10-14T02:19:40+00:00"
+    "timestamp": "2026-10-15T00:17:39+00:00"
   }
 ]
