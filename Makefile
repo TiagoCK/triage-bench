@@ -25,3 +25,22 @@ smoke:
 
 fixture:
 	uv run python $(FIXTURE)/make_fixture.py
+
+# --- live service -------------------------------------------------------------
+SERVICE_TEST_DB := postgresql://triage:triage@localhost:5433/postgres
+
+.PHONY: service-db service-test up down
+
+# Start only Postgres (for tests and local runs).
+service-db:
+	docker compose up -d --wait db
+
+# Service tests against the Docker Postgres; each run uses a throwaway database.
+service-test: service-db
+	TRIAGE_TEST_DATABASE_URL=$(SERVICE_TEST_DB) uv run --extra service pytest -q tests/service
+
+up:
+	docker compose up --build
+
+down:
+	docker compose down

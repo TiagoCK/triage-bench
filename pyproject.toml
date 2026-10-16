@@ -23,6 +23,12 @@ dependencies = [
 embed = ["sentence-transformers>=3.0"]
 # LLM systems. 1.82.7 and 1.82.8 were backdoored on PyPI (March 2026); never allow them.
 llm = ["litellm>=1.80,!=1.82.7,!=1.82.8"]
+service = [
+    "fastapi>=0.115",
+    "psycopg[binary,pool]>=3.2",
+    "pydantic-settings>=2.6",
+    "uvicorn>=0.32",
+]
 
 [project.scripts]
 triage = "triage.cli:app"

@@ -244,6 +244,28 @@ uv run triage eval --repo microsoft/vscode --systems llm-zeroshot,llm-fewshot,ll
 - `ANTHROPIC_API_KEY` is removed from the CLI's environment so these calls cannot fall back
   to API billing. `--bare` mode is not used, because it never reads the subscription login.
 
+## Live service (Phase 2, in progress)
+
+`src/triage/service/` is the start of a deployed triage bot that runs in **shadow mode**: it
+records what it would do and never posts to GitHub. So far it has:
+
+- A webhook receiver (FastAPI). It checks GitHub's HMAC signature, drops repeat deliveries
+  by delivery ID, enqueues a job and answers 202, recording the delivery and the job in one
+  transaction.
+- A Postgres job queue with `FOR UPDATE SKIP LOCKED` claiming, so any number of workers can
+  run. Failures retry with exponential backoff; after 5 attempts a job is parked as `dead`.
+  Jobs held by a crashed worker are requeued.
+- A worker that stores each issue, ignoring events older than what it already has.
+  Retrieval, the duplicate judge and labels come next.
+
+Run it locally (needs Docker):
+
+```bash
+TRIAGE_WEBHOOK_SECRET=local-dev-only make up    # Postgres + api on :8000 + worker
+curl localhost:8000/healthz
+make service-test                               # service tests against a throwaway database
+```
+
 ## Development
 
 ```bash

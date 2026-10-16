@@ -209,6 +209,48 @@ def gate(
     typer.echo(f"gate passed ({len(spec)} checks)")
 
 
+service_app = typer.Typer(no_args_is_help=True, help="The live triage service (shadow mode).")
+app.add_typer(service_app, name="service")
+
+
+@service_app.command("migrate")
+def service_migrate() -> None:
+    """Apply pending database migrations."""
+    from triage.service.db import make_pool, migrate
+    from triage.service.settings import get_settings
+
+    with make_pool(get_settings().database_url, max_size=1) as pool, pool.connection() as conn:
+        applied = migrate(conn)
+    typer.echo(f"applied {applied}" if applied else "database is up to date")
+
+
+@service_app.command("api")
+def service_api(
+    host: str = typer.Option("0.0.0.0"),
+    port: int = typer.Option(8000),
+) -> None:
+    """Run the webhook receiver and health check."""
+    import uvicorn
+
+    from triage.service.app import create_app
+
+    uvicorn.run(create_app(), host=host, port=port)
+
+
+@service_app.command("worker")
+def service_worker() -> None:
+    """Run a worker that processes queued jobs until stopped."""
+    from triage.service.db import make_pool, migrate
+    from triage.service.settings import get_settings
+    from triage.service.worker import run_forever
+
+    settings = get_settings()
+    with make_pool(settings.database_url, max_size=2) as pool:
+        with pool.connection() as conn:
+            migrate(conn)
+        run_forever(pool, settings)
+
+
 def _write_table(rows: list[dict], path: Path) -> None:
     from triage.eval.report import render
 

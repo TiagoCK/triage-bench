@@ -1,0 +1,42 @@
+# Local stack for the live service: Postgres (with pgvector, used from Week 2), the webhook
+# receiver, and one worker. `make up` builds and starts everything; `make service-db`
+# starts only Postgres, for tests.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: triage
+      POSTGRES_PASSWORD: triage   # local development only
+      POSTGRES_DB: triage
+    ports:
+      - "5433:5432"               # 5433 on the host, to avoid clashing with a local Postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U triage"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  api:
+    build: .
+    command: ["triage", "service", "api"]
+    environment: &service-env
+      TRIAGE_DATABASE_URL: postgresql://triage:triage@db:5432/triage
+      TRIAGE_WEBHOOK_SECRET: ${TRIAGE_WEBHOOK_SECRET:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: ["triage", "service", "worker"]
+    environment: *service-env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
