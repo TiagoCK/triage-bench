@@ -60,14 +60,32 @@ HANDLERS: dict[str, Handler] = {
 def pipeline_handlers(settings: Settings) -> dict[str, Handler]:
     """Handlers that run the full pipeline. Loads the embedding model (once per process)."""
     from triage.service.embeddings import FastEmbedder
+    from triage.service.github_app import TokenProvider
+    from triage.service.outcomes import check_outcomes
     from triage.service.pipeline import LabelerRegistry, Pipeline
+    from triage.service.poller import poll_new_issues
 
     pipeline = Pipeline(
         settings,
         FastEmbedder(settings.embed_model, settings.model_cache_dir),
         LabelerRegistry(settings.labeler_dir),
     )
-    return {**HANDLERS, "github.issue": pipeline.handle_issue}
+    tokens = TokenProvider(settings)
+
+    def poll(conn: Connection, payload: dict[str, Any]) -> None:
+        repo = payload["repo"]
+        poll_new_issues(conn, settings, repo, tokens.client_for(conn, repo))
+
+    def outcomes(conn: Connection, payload: dict[str, Any]) -> None:
+        repo = payload["repo"]
+        check_outcomes(conn, settings, repo, tokens.client_for(conn, repo))
+
+    return {
+        **HANDLERS,
+        "github.issue": pipeline.handle_issue,
+        "poll.new_issues": poll,
+        "outcomes.check": outcomes,
+    }
 
 
 def run_once(

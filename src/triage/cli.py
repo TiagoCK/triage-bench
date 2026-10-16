@@ -313,6 +313,20 @@ def service_worker() -> None:
         run_forever(pool, settings)
 
 
+@service_app.command("scheduler")
+def service_scheduler() -> None:
+    """Enqueue periodic jobs (polling, outcome checks) for TRIAGE_WATCH_REPOS."""
+    from triage.service.db import make_pool, migrate
+    from triage.service.scheduler import run_forever
+    from triage.service.settings import get_settings
+
+    settings = get_settings()
+    with make_pool(settings.database_url, max_size=1) as pool:
+        with pool.connection() as conn:
+            migrate(conn)
+        run_forever(pool, settings)
+
+
 @service_app.command("backfill")
 def service_backfill(
     repo: str = typer.Option(..., help="owner/name"),

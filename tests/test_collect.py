@@ -166,3 +166,38 @@ def test_mentions_collected_only_for_duplicate_closed_issues():
 def test_label_events_recorded():
     rec = normalize_issue(node(10, labels=["bug"]), REPO)
     assert rec["label_events"] == [{"label": "bug", "at": "2025-05-01T00:00:00Z", "actor": "form"}]
+
+
+def test_collector_query_text_is_unchanged():
+    # The page cache is keyed on this text: ISSUE_FIELDS was factored out of it without
+    # changing a byte. If this fails, every cached collection page is invalidated.
+    import hashlib
+
+    from triage.dataset.collect import ISSUES_QUERY
+
+    assert (
+        hashlib.sha256(ISSUES_QUERY.encode()).hexdigest()
+        == "e9d96721a62da33963a5410da9aa921d1592b605c8aca7e6b425df9e2560abf4"
+    )
+
+
+def test_not_found_errors_tolerated_only_when_asked(tmp_path):
+    import pytest
+
+    from triage.github_client import GitHubError
+
+    body = {
+        "data": {"repository": {"i1": {"number": 1}, "i2": None}},
+        "errors": [{"type": "NOT_FOUND", "message": "Could not resolve to an Issue"}],
+    }
+
+    def handler(request):
+        return httpx.Response(200, json=body)
+
+    strict = GitHubClient("t", cache_dir=None, transport=httpx.MockTransport(handler))
+    with pytest.raises(GitHubError):
+        strict.query("q", {})
+    lenient = GitHubClient(
+        "t", cache_dir=None, transport=httpx.MockTransport(handler), tolerate_not_found=True
+    )
+    assert lenient.query("q", {})["repository"]["i2"] is None

@@ -37,6 +37,7 @@ class GitHubClient:
         cache_dir: Path | None = Path(".cache/github"),
         transport: httpx.BaseTransport | None = None,
         sleep=time.sleep,
+        tolerate_not_found: bool = False,
     ) -> None:
         if not token:
             raise GitHubError("GITHUB_TOKEN is empty. GraphQL requires a token; see .env.example.")
@@ -50,6 +51,9 @@ class GitHubClient:
         )
         self._cache_dir = cache_dir
         self._sleep = sleep
+        # Batched lookups of specific issues: a deleted or transferred one comes back as a
+        # NOT_FOUND error next to the others' data. Opt in to keep that data.
+        self._tolerate_not_found = tolerate_not_found
         if cache_dir:
             cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -89,7 +93,16 @@ class GitHubClient:
                 raise GitHubError(f"HTTP {resp.status_code}: {resp.text[:500]}")
 
             payload = resp.json()
-            if payload.get("errors"):
+            errors = payload.get("errors") or []
+            if (
+                errors
+                and self._tolerate_not_found
+                and payload.get("data")
+                and all(e.get("type") == "NOT_FOUND" for e in errors)
+            ):
+                log.info("GraphQL NOT_FOUND for %d item(s); keeping the rest", len(errors))
+                return payload["data"]
+            if errors:
                 # Large pages occasionally time out server-side; those come back as errors
                 # with partial data. Retry them; anything else is a real query bug.
                 messages = "; ".join(e.get("message", "") for e in payload["errors"])

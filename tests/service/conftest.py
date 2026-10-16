@@ -10,7 +10,16 @@ import uuid
 
 import pytest
 
-TABLES = ("jobs", "webhook_deliveries", "predictions", "issue_embeddings", "issues")
+TABLES = (
+    "jobs",
+    "webhook_deliveries",
+    "predictions",
+    "issue_embeddings",
+    "outcomes",
+    "poll_cursors",
+    "installations",
+    "issues",
+)
 
 
 @pytest.fixture(scope="session")

@@ -27,6 +27,12 @@ services:
     environment: &service-env
       TRIAGE_DATABASE_URL: postgresql://triage:triage@db:5432/triage
       TRIAGE_WEBHOOK_SECRET: ${TRIAGE_WEBHOOK_SECRET:-}
+      # Read-only token for polling public repos; Compose reads GITHUB_TOKEN from .env.
+      TRIAGE_GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      TRIAGE_GITHUB_APP_ID: ${TRIAGE_GITHUB_APP_ID:-}
+      TRIAGE_GITHUB_APP_PRIVATE_KEY: ${TRIAGE_GITHUB_APP_PRIVATE_KEY:-}
+      TRIAGE_WATCH_REPOS: '${TRIAGE_WATCH_REPOS:-["astral-sh/uv"]}'
+      TRIAGE_POLL_INITIAL_LOOKBACK_S: ${TRIAGE_POLL_INITIAL_LOOKBACK_S:-3600}
     ports:
       - "8000:8000"
     depends_on:
@@ -42,6 +48,17 @@ services:
     environment: *service-env
     volumes:
       - ./artifacts:/app/artifacts:ro   # exported labelers (`triage export-labeler`)
+    depends_on:
+      db:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      args:
+        CODE_VERSION: ${CODE_VERSION:-dev}
+    command: ["triage", "service", "scheduler"]
+    environment: *service-env
     depends_on:
       db:
         condition: service_healthy

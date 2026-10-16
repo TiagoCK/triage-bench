@@ -272,6 +272,20 @@ wired in yet. Its prompt-building and reply-parsing code is shared with the benc
 (`build_judge_prompt`, `parse_judge_reply`), and re-running the benchmark after the refactor
 hit the LLM cache 100%, so the prompts are byte-identical.
 
+**Sources and outcomes** (week 3)
+- A scheduler process enqueues periodic jobs, one per time slot, so restarts or a second
+  scheduler never double up. A **poller** reads new issues from watched public repos
+  (`TRIAGE_WATCH_REPOS`) with the benchmark collector's GraphQL walk, using a read-only
+  token. Its cursor only advances in the transaction that enqueues the issues.
+- **Outcome tracking** re-checks recently predicted issues and records what maintainers did:
+  state, close reason, final labels, label history, and the duplicate original. Duplicate
+  direction uses the benchmark's own rules (`resolve_duplicate`), so live outcomes and
+  benchmark ground truth mean the same thing.
+- **GitHub App authentication**: signed App JWTs, installation tokens cached until 5 minutes
+  before expiry, the repo-to-installation map kept from webhook deliveries, and a fallback to
+  the read-only token. Rate-limit waits over 30 seconds fail the job so it retries later,
+  instead of blocking a worker.
+
 **Parity with the benchmark.** `triage service replay --repo R` rebuilds a repo's benchmark
 corpus in a fresh database, replays the benchmark's LLM sample through the real worker, and
 compares retrieval, labels and judge prompts with the offline benchmark. Results are in
@@ -284,6 +298,7 @@ uv run triage export-labeler --repo astral-sh/uv            # label model for th
 TRIAGE_WEBHOOK_SECRET=local-dev-only make up                # Postgres + api on :8000 + worker
 TRIAGE_DATABASE_URL=postgresql://triage:triage@localhost:5433/triage \
   uv run triage service backfill --repo astral-sh/uv --from-raw data/raw/astral-sh__uv.jsonl
+TRIAGE_WATCH_REPOS='["astral-sh/uv"]' make up               # also runs the scheduler and poller
 make service-test                                           # tests against a throwaway database
 ```
 

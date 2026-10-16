@@ -9,12 +9,14 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TRIAGE_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_prefix="TRIAGE_", env_file=".env", extra="ignore", env_ignore_empty=True
+    )
 
     database_url: str = "postgresql://triage:triage@localhost:5432/triage"
     # GitHub App webhook secret. Without it the webhook endpoint refuses every request.
@@ -39,6 +41,24 @@ class Settings(BaseSettings):
     labeler_dir: Path = Path("artifacts/labelers")  # <repo slug>/LATEST -> version dir
     retrieval_k: int = 5
     code_version: str = "dev"  # set at image build time
+
+    # GitHub access. The read-only token (TRIAGE_GITHUB_TOKEN, or the benchmark's
+    # GITHUB_TOKEN) is used unless the GitHub App is configured and installed on the repo.
+    github_token: SecretStr | None = Field(
+        default=None, validation_alias=AliasChoices("TRIAGE_GITHUB_TOKEN", "GITHUB_TOKEN")
+    )
+    github_app_id: int | None = None
+    github_app_private_key: SecretStr | None = None  # the App's PEM key, from the environment
+    github_api_url: str = "https://api.github.com"
+
+    # Polling and outcome tracking. TRIAGE_WATCH_REPOS is JSON: '["astral-sh/uv"]'.
+    watch_repos: list[str] = []
+    scheduler_tick_s: float = 30.0
+    poll_interval_s: int = 600
+    poll_initial_lookback_s: int = 3600  # first poll only; history comes from backfill
+    outcome_interval_s: int = 3600
+    outcome_window_days: int = 30
+    outcome_batch: int = 100
 
 
 @lru_cache

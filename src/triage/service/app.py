@@ -18,6 +18,7 @@ from psycopg_pool import ConnectionPool
 
 from triage.service import queue
 from triage.service.db import make_pool, migrate
+from triage.service.github_app import record_installations
 from triage.service.settings import Settings, get_settings
 from triage.service.webhooks import job_for_event, verify_signature
 
@@ -78,6 +79,7 @@ def create_app(settings: Settings | None = None, pool: ConnectionPool | None = N
             ).fetchone()
             if not first_time:
                 return JSONResponse({"duplicate": True}, status_code=200)
+            record_installations(conn, event, payload)
             if job is None:
                 return JSONResponse({"ignored": True}, status_code=200)
             kind, job_payload = job

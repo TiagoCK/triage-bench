@@ -135,6 +135,76 @@ def build_label_vocab(
     return [lbl for lbl, _ in eligible[:top_k]]
 
 
+@dataclass(frozen=True)
+class IssueFacts:
+    """What duplicate orientation needs to know about an issue."""
+
+    created_at: pd.Timestamp
+    has_dup_signal: bool  # closed as duplicate, or carries a duplicate label
+
+
+def orient_pair(
+    a: int, b: int, directed: tuple[int, int] | None, facts: dict[int, IssueFacts]
+) -> tuple[int, int, str] | None:
+    """(duplicate, canonical, rule) for a linked pair, or None if the canonical is not older.
+
+    Rules, in order: an explicit "Duplicate of #N" comment; the side closed as (or labeled)
+    duplicate; the newer issue. Shared by the benchmark build and the live outcome tracker.
+    """
+    if directed:
+        dup, canon = directed
+        how = "comment"
+    elif facts[a].has_dup_signal != facts[b].has_dup_signal:
+        dup = a if facts[a].has_dup_signal else b
+        canon = b if dup == a else a
+        how = "close_reason"
+    else:
+        dup, canon = (b, a) if facts[b].created_at > facts[a].created_at else (a, b)
+        how = "created_order"
+    if facts[canon].created_at >= facts[dup].created_at:
+        return None
+    return dup, canon, how
+
+
+def mention_canonical(me: int, mentions: list[int], facts: dict[int, IssueFacts]) -> int | None:
+    """Fallback for an issue closed as duplicate with no link: the single older issue its
+    comments reference, or None when there are zero or several."""
+    older = [
+        int(m)
+        for m in mentions
+        if int(m) in facts and facts[int(m)].created_at < facts[me].created_at
+    ]
+    return older[0] if len(older) == 1 else None
+
+
+def resolve_duplicate(
+    me: int, links: list[dict], mentions: list[int], facts: dict[int, IssueFacts]
+) -> tuple[int, str] | None:
+    """(canonical, rule) if issue `me` is a duplicate according to its own links, else None.
+
+    The live outcome tracker's view of one issue, using the same rules as the benchmark.
+    With several originals, the earliest wins (as `dup_of` does in the benchmark).
+    """
+    found = []
+    for link in links:
+        other = int(link["other"])
+        if other not in facts:
+            continue
+        pair = orient_pair(
+            min(me, other), max(me, other), (me, other) if link["directed"] else None, facts
+        )
+        if pair and pair[0] == me:
+            found.append((facts[pair[1]].created_at, pair[1], pair[2]))
+    if found:
+        _, canon, how = min(found)
+        return canon, how
+    if facts[me].has_dup_signal:
+        canon = mention_canonical(me, mentions, facts)
+        if canon is not None:
+            return canon, "mention"
+    return None
+
+
 @dataclass
 class _Link:
     sources: set[str] = field(default_factory=set)
@@ -158,23 +228,21 @@ def build_dup_pairs(issues: pd.DataFrame) -> tuple[pd.DataFrame, Counter]:
             if link["directed"]:
                 entry.directed = (int(me), other)
 
+    facts = {
+        int(n): IssueFacts(c, bool(s))
+        for n, c, s in zip(
+            issues["number"], issues["created_at"], issues["has_dup_signal"], strict=True
+        )
+    }
     stats: Counter = Counter()
     rows = []
     for key, entry in links.items():
         a, b = sorted(key)
-        if entry.directed:
-            dup, canon = entry.directed
-            how = "comment"
-        elif info.at[a, "has_dup_signal"] != info.at[b, "has_dup_signal"]:
-            dup = a if info.at[a, "has_dup_signal"] else b
-            canon = b if dup == a else a
-            how = "close_reason"
-        else:
-            dup, canon = (b, a) if info.at[b, "created_at"] > info.at[a, "created_at"] else (a, b)
-            how = "created_order"
-        if info.at[canon, "created_at"] >= info.at[dup, "created_at"]:
+        oriented = orient_pair(a, b, entry.directed, facts)
+        if oriented is None:
             stats["dropped_canonical_not_older"] += 1
             continue
+        dup, canon, how = oriented
         stats[f"oriented_by_{how}"] += 1
         rows.append(
             {
@@ -190,19 +258,15 @@ def build_dup_pairs(issues: pd.DataFrame) -> tuple[pd.DataFrame, Counter]:
     resolved = {r["duplicate"] for r in rows}
     flagged = issues[issues["has_dup_signal"] & ~issues["number"].isin(resolved)]
     for me, mentions in zip(flagged["number"], flagged["dup_mentions"], strict=True):
-        older = [
-            int(m)
-            for m in mentions
-            if int(m) in info.index and info.at[int(m), "created_at"] < info.at[me, "created_at"]
-        ]
-        if len(older) != 1:
+        canon = mention_canonical(int(me), list(mentions), facts)
+        if canon is None:
             stats["mention_ambiguous_or_none"] += 1
             continue
         stats["oriented_by_mention"] += 1
         rows.append(
             {
                 "duplicate": int(me),
-                "canonical": older[0],
+                "canonical": canon,
                 "created_at": info.at[me, "created_at"],
                 "split": info.at[me, "split"],
                 "source": "mention",

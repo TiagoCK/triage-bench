@@ -18,13 +18,8 @@ from triage.github_client import GitHubClient
 
 log = logging.getLogger(__name__)
 
-ISSUES_QUERY = """
-query($owner: String!, $name: String!, $pageSize: Int!, $after: String) {
-  rateLimit { cost remaining resetAt }
-  repository(owner: $owner, name: $name) {
-    issues(first: $pageSize, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
-      pageInfo { hasNextPage endCursor }
-      nodes {
+# The issue fields the collector, the live poller and the outcome tracker all fetch.
+ISSUE_FIELDS = """
         number title body url createdAt closedAt state stateReason
         author { login }
         labels(first: 30) { nodes { name } }
@@ -50,11 +45,26 @@ query($owner: String!, $name: String!, $pageSize: Int!, $after: String) {
             }
           }
         }
-      }
+"""
+
+# Built from ISSUE_FIELDS; the text must not change (the page cache is keyed on it, and a
+# test pins its hash).
+ISSUES_QUERY = (
+    """
+query($owner: String!, $name: String!, $pageSize: Int!, $after: String) {
+  rateLimit { cost remaining resetAt }
+  repository(owner: $owner, name: $name) {
+    issues(first: $pageSize, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
+      pageInfo { hasNextPage endCursor }
+      nodes {
+"""
+    + ISSUE_FIELDS[1:]
+    + """      }
     }
   }
 }
 """
+)
 
 LABELS_QUERY = """
 query($owner: String!, $name: String!, $after: String) {

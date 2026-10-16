@@ -167,3 +167,30 @@ def test_issue_text_matches_build_output(fixture_repo):
     row = pd.read_parquet(repo_dir / "issues.parquet").iloc[0]
     assert row["text"] == issue_text(row["title"], row["body_clean"])
     assert issue_text("T", "B") == "T\n\nB"
+
+
+def test_resolve_duplicate_uses_the_benchmark_rules():
+    from triage.dataset.build import IssueFacts, resolve_duplicate
+
+    t = lambda d: pd.Timestamp(f"2025-01-{d:02d}", tz="UTC")  # noqa: E731
+    facts = {
+        1: IssueFacts(t(1), False),
+        2: IssueFacts(t(2), False),
+        3: IssueFacts(t(3), True),  # closed as duplicate
+        4: IssueFacts(t(4), True),
+        5: IssueFacts(t(5), False),
+    }
+    # Timeline link seen from the duplicate: close reason decides.
+    assert resolve_duplicate(3, [link(1)], [], facts) == (1, "close_reason")
+    # Explicit comment wins, even pointing at a later-numbered (but older) issue.
+    assert resolve_duplicate(4, [link(2, "comment", True)], [], facts) == (2, "comment")
+    # Neither side flagged: the newer issue is the duplicate, so 1 is not a duplicate of 2.
+    assert resolve_duplicate(2, [link(1)], [], facts) == (1, "created_order")
+    assert resolve_duplicate(1, [link(2)], [], facts) is None
+    # No links: a single older mention resolves it; several don't.
+    assert resolve_duplicate(4, [], [2], facts) == (2, "mention")
+    assert resolve_duplicate(4, [], [1, 2], facts) is None
+    # Several originals: the earliest wins.
+    assert resolve_duplicate(4, [link(2), link(1)], [], facts) == (1, "close_reason")
+    # Links to unknown issues are ignored.
+    assert resolve_duplicate(3, [link(999)], [], facts) is None
