@@ -71,6 +71,11 @@ _WS_RE = re.compile(r"[ \t]+")
 _BLANK_LINES_RE = re.compile(r"\n{3,}")
 
 
+def issue_text(title: str, body_clean: str) -> str:
+    """The labeler's input text, shared by the benchmark and the live service."""
+    return title + "\n\n" + body_clean
+
+
 def clean_body(body: str) -> str:
     """Strip issue-template comments and squeeze whitespace; truncate long bodies."""
     text = _HTML_COMMENT_RE.sub("", body or "")
@@ -224,7 +229,9 @@ def build_repo(cfg: RepoConfig, raw_dir: Path, out_dir: Path) -> dict:
         issues["created_at"] >= validation_start
     )
     issues["body_clean"] = issues["body"].map(clean_body)
-    issues["text"] = issues["title"] + "\n\n" + issues["body_clean"]
+    issues["text"] = [
+        issue_text(t, b) for t, b in zip(issues["title"], issues["body_clean"], strict=True)
+    ]
     issues["has_dup_signal"] = (issues["state_reason"] == "DUPLICATE") | issues["labels"].map(
         lambda ls: any("duplicate" in lbl.lower() for lbl in ls)
     )

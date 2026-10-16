@@ -12,6 +12,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 from difflib import SequenceMatcher
 from pathlib import Path
+from typing import Any, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,20 @@ from triage.llm import CallRecord, LLMError, complete_json
 log = logging.getLogger(__name__)
 
 Hit = tuple[int, float]  # (issue number, score)
+
+
+class IssueDoc(NamedTuple):
+    """The parts of an issue the duplicate judge sees. Built from a DataFrame row in the
+    benchmark and from Postgres in the live service, so both send identical prompts."""
+
+    number: int
+    title: str
+    body_clean: str
+
+
+def embedding_text(title: str, body_clean: str) -> str:
+    """The exact text embedded for an issue, shared by the benchmark and the service."""
+    return title + "\n\n" + body_clean[:1500]
 
 
 class Retriever:
@@ -123,7 +138,9 @@ class EmbeddingRetriever(Retriever):
         self.name = "embed-" + model_name.split("/")[-1]
 
     def _build(self, issues: pd.DataFrame) -> None:
-        texts = (issues["title"] + "\n\n" + issues["body_clean"].str[:1500]).tolist()
+        texts = [
+            embedding_text(t, b) for t, b in zip(issues["title"], issues["body_clean"], strict=True)
+        ]
         self.emb = encode_cached(self.model_name, texts, self.cache_dir)
 
     def _scores(self, i: int, n_before: int) -> np.ndarray:
@@ -239,37 +256,54 @@ class LLMDuplicateJudge:
             return hits, None, 0.0
         issues = self.retriever.issues
         pos = self.retriever.position
-        new = issues.iloc[pos[number]]
-        parts = [f"New issue #{number}:\n{_fmt(new)}\n", "Candidates:"]
-        for n, _ in hits:
-            parts.append(f"\n#{n}:\n{_fmt(issues.iloc[pos[n]], 800)}")
-        system = DUP_SYSTEM_PROMPT.format(repo=self.repo)
+
+        def doc(n: int) -> IssueDoc:
+            row = issues.iloc[pos[n]]
+            return IssueDoc(n, row["title"], row["body_clean"])
+
+        system, user = build_judge_prompt(self.repo, doc(number), [doc(n) for n, _ in hits])
         try:
-            reply, record = complete_json(self.model, system, "\n".join(parts))
+            reply, record = complete_json(self.model, system, user)
         except LLMError as exc:
             log.warning("duplicate call failed: %s", exc)
             self.failures += 1
             return hits, None, 0.0
         self.records.append(record)
 
-        chosen = reply.get("duplicate_of")
-        try:
-            chosen = int(chosen) if chosen is not None else None
-        except (TypeError, ValueError):
-            chosen = None
-        if chosen not in {n for n, _ in hits}:
-            chosen = None  # the model named an issue it was not shown
-        try:
-            conf = float(reply.get("confidence", 0.0))
-        except (TypeError, ValueError):
-            conf = 0.0
+        chosen, conf = parse_judge_reply(reply, [n for n, _ in hits])
         if chosen is not None:
             hits = [h for h in hits if h[0] == chosen] + [h for h in hits if h[0] != chosen]
-        return hits, chosen, conf if chosen is not None else 0.0
+        return hits, chosen, conf
 
 
-def _fmt(row: pd.Series, body_chars: int = 1500) -> str:
-    body = row["body_clean"]
+def build_judge_prompt(repo: str, new: IssueDoc, candidates: list[IssueDoc]) -> tuple[str, str]:
+    """(system, user) messages for the duplicate judge. The live service calls this too, so
+    any change here changes both, and the LLM cache shows whether the bytes moved."""
+    parts = [f"New issue #{new.number}:\n{_fmt(new)}\n", "Candidates:"]
+    for c in candidates:
+        parts.append(f"\n#{c.number}:\n{_fmt(c, 800)}")
+    return DUP_SYSTEM_PROMPT.format(repo=repo), "\n".join(parts)
+
+
+def parse_judge_reply(reply: dict[str, Any], candidates: list[int]) -> tuple[int | None, float]:
+    """(chosen issue or None, confidence). A pick outside the shown candidates is dropped,
+    and confidence is 0 when nothing is picked."""
+    chosen = reply.get("duplicate_of")
+    try:
+        chosen = int(chosen) if chosen is not None else None
+    except (TypeError, ValueError):
+        chosen = None
+    if chosen not in set(candidates):
+        chosen = None  # the model named an issue it was not shown
+    try:
+        conf = float(reply.get("confidence", 0.0))
+    except (TypeError, ValueError):
+        conf = 0.0
+    return chosen, conf if chosen is not None else 0.0
+
+
+def _fmt(doc: IssueDoc, body_chars: int = 1500) -> str:
+    body = doc.body_clean
     if len(body) > body_chars:
         body = body[:body_chars] + " ..."
-    return f"Title: {row['title']}\n{body}"
+    return f"Title: {doc.title}\n{body}"

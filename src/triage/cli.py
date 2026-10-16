@@ -141,6 +141,68 @@ def eval_(
     typer.echo(f"{len(rows)} result rows; table at {results.parent / 'table.md'}")
 
 
+@app.command("export-labeler")
+def export_labeler(
+    repo: str = typer.Option(..., help="owner/name"),
+    train_only: bool = typer.Option(
+        False, help="Train on the benchmark's train split only (reproduces its model)."
+    ),
+    processed_dir: Path = typer.Option(PROCESSED_DIR),
+    out_dir: Path = typer.Option(Path("artifacts/labelers")),
+) -> None:
+    """Fit the TF-IDF labeler and save it as a versioned artifact for the live service.
+
+    The default trains on every labeled issue and becomes the repo's LATEST model.
+    --train-only reproduces the benchmark's model exactly, for parity checks.
+    """
+    import hashlib
+
+    import pandas as pd
+
+    from triage.systems.labels import TfidfLabeler
+
+    repo_dir = processed_dir / repo.replace("/", "__")
+    meta = json.loads((repo_dir / "meta.json").read_text())
+    issues = pd.read_parquet(repo_dir / "issues.parquet")
+    labeled = issues[issues["target_labels"].map(len) > 0]
+    if train_only:
+        labeled = labeled[labeled["split"] == "train"]
+    data_key = json.dumps(
+        [
+            meta["label_vocab"],
+            labeled["number"].tolist(),
+            [list(x) for x in labeled["target_labels"]],
+            train_only,
+        ]
+    )
+    digest = hashlib.sha256(data_key.encode()).hexdigest()[:8]
+    version = f"{datetime.now(UTC):%Y%m%d}-{digest}" + ("-train" if train_only else "")
+
+    labeler = TfidfLabeler()
+    labeler.fit(labeled, meta["label_vocab"])
+    target = out_dir / repo.replace("/", "__") / version
+    labeler.save(target)
+    (target / "meta.json").write_text(
+        json.dumps(
+            {
+                "repo": repo,
+                "version": version,
+                "train_only": train_only,
+                "n_issues": len(labeled),
+                "trained_on": {
+                    "from": str(labeled["created_at"].min()),
+                    "to": str(labeled["created_at"].max()),
+                },
+                "label_vocab": [v["name"] for v in meta["label_vocab"]],
+            },
+            indent=2,
+        )
+    )
+    if not train_only:
+        (target.parent / "LATEST").write_text(version + "\n")
+    typer.echo(f"{repo}: {len(labeled)} issues -> {target}")
+
+
 @app.command("analyze-gates")
 def analyze_gates(
     repo: str = typer.Option(..., help="owner/name"),
@@ -249,6 +311,75 @@ def service_worker() -> None:
         with pool.connection() as conn:
             migrate(conn)
         run_forever(pool, settings)
+
+
+@service_app.command("backfill")
+def service_backfill(
+    repo: str = typer.Option(..., help="owner/name"),
+    from_raw: Path = typer.Option(None, help="A benchmark raw JSONL file (offline)."),
+    from_api: bool = typer.Option(False, help="Fetch from GitHub (needs GITHUB_TOKEN)."),
+    since: str = typer.Option(None, help="Only issues created on or after this date."),
+) -> None:
+    """Load historical issues so new issues have earlier ones to match. No predictions."""
+    from triage.service.db import make_pool, migrate
+    from triage.service.embeddings import FastEmbedder
+    from triage.service.pipeline import backfill
+    from triage.service.settings import get_settings
+
+    if bool(from_raw) == from_api:
+        raise typer.BadParameter("pass exactly one of --from-raw or --from-api")
+    since_dt = datetime.fromisoformat(since).replace(tzinfo=UTC) if since else None
+    if from_raw:
+        records = (json.loads(line) for line in from_raw.open())
+        if since_dt:
+            records = (
+                r
+                for r in records
+                if datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")) >= since_dt
+            )
+    else:
+        from triage.dataset.collect import iter_issue_nodes, normalize_issue
+        from triage.github_client import GitHubClient
+
+        client = GitHubClient(os.environ.get("GITHUB_TOKEN", ""))
+        start = since_dt or datetime(2008, 1, 1, tzinfo=UTC)
+        records = (normalize_issue(n, repo) for n in iter_issue_nodes(client, repo, start))
+
+    settings = get_settings()
+    embedder = FastEmbedder(settings.embed_model, settings.model_cache_dir)
+    with make_pool(settings.database_url, max_size=1) as pool, pool.connection() as conn:
+        migrate(conn)
+        n = backfill(conn, repo, records, embedder)
+    typer.echo(f"{repo}: backfilled {n} issues")
+
+
+@service_app.command("replay")
+def service_replay(
+    repo: str = typer.Option(..., help="owner/name"),
+    keep_db: bool = typer.Option(False, help="Keep the replay database afterwards."),
+    processed_dir: Path = typer.Option(PROCESSED_DIR),
+    raw_dir: Path = typer.Option(RAW_DIR),
+    results: Path = typer.Option(RESULTS),
+) -> None:
+    """Replay the benchmark's LLM sample through the service and check parity with the
+    offline benchmark (retrieval, labels, judge prompt). Exits 1 if a parity bar is missed."""
+    from triage.service import replay
+    from triage.service.settings import get_settings
+
+    slug = repo.replace("/", "__")
+    out = results.parent / "parity" / f"{slug}.json"
+    report = replay.run(
+        repo,
+        get_settings(),
+        processed_dir,
+        raw_dir,
+        results.parent / "predictions",
+        out,
+        keep_db=keep_db,
+    )
+    typer.echo(json.dumps(report, indent=2))
+    if not report["pass"]:
+        raise typer.Exit(1)
 
 
 def _write_table(rows: list[dict], path: Path) -> None:

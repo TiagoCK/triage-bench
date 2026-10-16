@@ -1,0 +1,28 @@
+{
+  "repo": "microsoft/vscode",
+  "replayed": 200,
+  "corpus": 45675,
+  "embed_model": "triage/bge-small-en-v1.5-fp32",
+  "retrieval": {
+    "mean_overlap@5": 1.0,
+    "exact_match_rate": 0.98,
+    "duplicates": 100,
+    "recall@5_service": 0.47,
+    "recall@5_benchmark": 0.47
+  },
+  "labels": {
+    "identical_rate": 1.0
+  },
+  "prompt": {
+    "compared": 196,
+    "identical": 196
+  },
+  "timings": {
+    "backfill_s": 2079.3,
+    "replay_s": 11.5,
+    "p50_embed_ms": 28.7,
+    "p50_label_ms": 1.1,
+    "p50_retrieve_ms": 23.8
+  },
+  "pass": true
+}

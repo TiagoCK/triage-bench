@@ -1,0 +1,28 @@
+{
+  "repo": "astral-sh/uv",
+  "replayed": 136,
+  "corpus": 9249,
+  "embed_model": "triage/bge-small-en-v1.5-fp32",
+  "retrieval": {
+    "mean_overlap@5": 1.0,
+    "exact_match_rate": 1.0,
+    "duplicates": 36,
+    "recall@5_service": 0.5833,
+    "recall@5_benchmark": 0.5833
+  },
+  "labels": {
+    "identical_rate": 1.0
+  },
+  "prompt": {
+    "compared": 136,
+    "identical": 136
+  },
+  "timings": {
+    "backfill_s": 274.1,
+    "replay_s": 5.5,
+    "p50_embed_ms": 23.8,
+    "p50_label_ms": 1.0,
+    "p50_retrieve_ms": 11.7
+  },
+  "pass": true
+}

@@ -9,7 +9,9 @@ from __future__ import annotations
 import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -48,13 +50,44 @@ class TfidfLabeler:
         self.clf.fit(x, y[:, keep])
 
     def predict(self, test: pd.DataFrame) -> list[list[str]]:
-        proba = self.clf.predict_proba(self.vec.transform(test["text"]))
-        out = []
-        for row in proba:
-            picked = list(self.classes[row >= self.threshold])
-            # Every evaluated issue has at least one gold label, so never predict nothing.
-            out.append(picked or [self.classes[int(row.argmax())]])
-        return out
+        return [self.pick(row) for row in self.proba(list(test["text"]))]
+
+    def predict_scores(self, texts: list[str]) -> list[dict[str, float]]:
+        """Per-label probabilities, so callers can apply their own thresholds later."""
+        return [
+            {str(c): round(float(p), 6) for c, p in zip(self.classes, row, strict=True)}
+            for row in self.proba(texts)
+        ]
+
+    def pick(self, row: np.ndarray) -> list[str]:
+        picked = [str(c) for c in self.classes[row >= self.threshold]]
+        # Every evaluated issue has at least one gold label, so never predict nothing.
+        return picked or [str(self.classes[int(row.argmax())])]
+
+    def proba(self, texts: list[str]) -> np.ndarray:
+        """Per-label probabilities, in the order of `self.classes`."""
+        return self.clf.predict_proba(self.vec.transform(texts))
+
+    def save(self, directory: Path) -> Path:
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / "model.joblib"
+        state = {
+            "vec": self.vec,
+            "clf": self.clf,
+            "classes": self.classes,
+            "vocab": self.vocab,
+            "threshold": self.threshold,
+        }
+        joblib.dump(state, path, compress=3)
+        return path
+
+    @classmethod
+    def load(cls, directory: Path) -> TfidfLabeler:
+        state = joblib.load(directory / "model.joblib")
+        labeler = cls(threshold=state["threshold"])
+        labeler.vec, labeler.clf = state["vec"], state["clf"]
+        labeler.classes, labeler.vocab = state["classes"], state["vocab"]
+        return labeler
 
 
 LABEL_SYSTEM_PROMPT = """You triage GitHub issues for the {repo} repository.

@@ -7,3 +7,4 @@ data/
 results/runs/
 .pytest_cache/
 .ruff_cache/
+artifacts/

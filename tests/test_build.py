@@ -158,3 +158,12 @@ def test_validation_is_the_end_of_train(fixture_repo):
     assert (val["created_at"] >= start).all()
     assert not issues.loc[issues["created_at"] < start, "is_validation"].any()
     assert meta["validation"]["n_issues"] == len(val)
+
+
+def test_issue_text_matches_build_output(fixture_repo):
+    from triage.dataset.build import issue_text
+
+    _, repo_dir, _ = fixture_repo
+    row = pd.read_parquet(repo_dir / "issues.parquet").iloc[0]
+    assert row["text"] == issue_text(row["title"], row["body_clean"])
+    assert issue_text("T", "B") == "T\n\nB"

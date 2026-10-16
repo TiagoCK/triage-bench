@@ -247,23 +247,44 @@ uv run triage eval --repo microsoft/vscode --systems llm-zeroshot,llm-fewshot,ll
 ## Live service (Phase 2, in progress)
 
 `src/triage/service/` is the start of a deployed triage bot that runs in **shadow mode**: it
-records what it would do and never posts to GitHub. So far it has:
+records what it would do and never posts to GitHub.
 
+**Receiving and queueing** (week 1)
 - A webhook receiver (FastAPI). It checks GitHub's HMAC signature, drops repeat deliveries
   by delivery ID, enqueues a job and answers 202, recording the delivery and the job in one
   transaction.
 - A Postgres job queue with `FOR UPDATE SKIP LOCKED` claiming, so any number of workers can
   run. Failures retry with exponential backoff; after 5 attempts a job is parked as `dead`.
   Jobs held by a crashed worker are requeued.
-- A worker that stores each issue, ignoring events older than what it already has.
-  Retrieval, the duplicate judge and labels come next.
+
+**Triage pipeline** (week 2). For each new issue the worker:
+1. Embeds the issue with bge-small-en-v1.5. It's the benchmark's model, run as BAAI's
+   full-precision ONNX export through fastembed (no torch), and it matched the benchmark's
+   embeddings exactly. Unchanged text is never re-embedded.
+2. Finds the 5 most similar issues with an exact pgvector cosine search, limited to issues
+   created before this one: the benchmark's time rule.
+3. Suggests labels with the exported TF-IDF model and keeps every label's probability.
+4. Stores one open-time prediction per issue, with model, labeler and code versions and
+   per-step timings.
+
+Retries and repeat deliveries never add a second prediction. The LLM duplicate judge isn't
+wired in yet. Its prompt-building and reply-parsing code is shared with the benchmark
+(`build_judge_prompt`, `parse_judge_reply`), and re-running the benchmark after the refactor
+hit the LLM cache 100%, so the prompts are byte-identical.
+
+**Parity with the benchmark.** `triage service replay --repo R` rebuilds a repo's benchmark
+corpus in a fresh database, replays the benchmark's LLM sample through the real worker, and
+compares retrieval, labels and judge prompts with the offline benchmark. Results are in
+[results/parity/](results/parity/).
 
 Run it locally (needs Docker):
 
 ```bash
-TRIAGE_WEBHOOK_SECRET=local-dev-only make up    # Postgres + api on :8000 + worker
-curl localhost:8000/healthz
-make service-test                               # service tests against a throwaway database
+uv run triage export-labeler --repo astral-sh/uv            # label model for the worker
+TRIAGE_WEBHOOK_SECRET=local-dev-only make up                # Postgres + api on :8000 + worker
+TRIAGE_DATABASE_URL=postgresql://triage:triage@localhost:5433/triage \
+  uv run triage service backfill --repo astral-sh/uv --from-raw data/raw/astral-sh__uv.jsonl
+make service-test                                           # tests against a throwaway database
 ```
 
 ## Development

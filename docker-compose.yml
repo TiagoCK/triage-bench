@@ -19,7 +19,10 @@ services:
       retries: 30
 
   api:
-    build: .
+    build:
+      context: .
+      args:
+        CODE_VERSION: ${CODE_VERSION:-dev}
     command: ["triage", "service", "api"]
     environment: &service-env
       TRIAGE_DATABASE_URL: postgresql://triage:triage@db:5432/triage
@@ -31,9 +34,14 @@ services:
         condition: service_healthy
 
   worker:
-    build: .
+    build:
+      context: .
+      args:
+        CODE_VERSION: ${CODE_VERSION:-dev}
     command: ["triage", "service", "worker"]
     environment: *service-env
+    volumes:
+      - ./artifacts:/app/artifacts:ro   # exported labelers (`triage export-labeler`)
     depends_on:
       db:
         condition: service_healthy

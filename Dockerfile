@@ -16,8 +16,16 @@ COPY src ./src
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --extra service
 
-RUN useradd --create-home --uid 1000 app
+ENV PATH="/app/.venv/bin:$PATH" TRIAGE_MODEL_CACHE_DIR=/app/models
+RUN useradd --create-home --uid 1000 app && install -d -o app /app/models
 USER app
-ENV PATH="/app/.venv/bin:$PATH"
+# Fetch the embedding model at build time, as the app user (a later chown would copy the
+# whole model into another layer), so containers start without network access.
+RUN python -c "from triage.service.embeddings import FastEmbedder; FastEmbedder(cache_dir='/app/models')"
+# From here on the model is local; never reach out to the Hugging Face Hub at runtime.
+ENV HF_HUB_OFFLINE=1
+
+ARG CODE_VERSION=dev
+ENV TRIAGE_CODE_VERSION=$CODE_VERSION
 EXPOSE 8000
 CMD ["triage", "service", "api"]

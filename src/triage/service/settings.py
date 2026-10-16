@@ -6,6 +6,7 @@ Secrets (the webhook secret) come only from the environment, never from files in
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import SecretStr
@@ -31,6 +32,13 @@ class Settings(BaseSettings):
     job_backoff_max_s: float = 600.0
     # A job locked longer than this is assumed to belong to a dead worker and is requeued.
     job_lock_timeout_s: float = 300.0
+
+    # Pipeline. The embedding model must match the one the benchmark evaluated.
+    embed_model: str = "triage/bge-small-en-v1.5-fp32"
+    model_cache_dir: Path | None = None  # where the embedding model is stored
+    labeler_dir: Path = Path("artifacts/labelers")  # <repo slug>/LATEST -> version dir
+    retrieval_k: int = 5
+    code_version: str = "dev"  # set at image build time
 
 
 @lru_cache

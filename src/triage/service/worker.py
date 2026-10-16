@@ -50,10 +50,24 @@ def store_issue(conn: Connection, payload: dict[str, Any]) -> None:
     )
 
 
+# Store-only handlers (Week 1 behaviour); the running worker uses pipeline_handlers().
 HANDLERS: dict[str, Handler] = {
     "github.issue": store_issue,
     "noop": lambda conn, payload: None,
 }
+
+
+def pipeline_handlers(settings: Settings) -> dict[str, Handler]:
+    """Handlers that run the full pipeline. Loads the embedding model (once per process)."""
+    from triage.service.embeddings import FastEmbedder
+    from triage.service.pipeline import LabelerRegistry, Pipeline
+
+    pipeline = Pipeline(
+        settings,
+        FastEmbedder(settings.embed_model, settings.model_cache_dir),
+        LabelerRegistry(settings.labeler_dir),
+    )
+    return {**HANDLERS, "github.issue": pipeline.handle_issue}
 
 
 def run_once(
@@ -104,7 +118,13 @@ def run_forever(pool: ConnectionPool, settings: Settings) -> None:
 
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
-    log.info("worker %s started (mode=%s)", worker_id, settings.mode)
+    handlers = pipeline_handlers(settings)
+    log.info(
+        "worker %s started (mode=%s, embed_model=%s)",
+        worker_id,
+        settings.mode,
+        settings.embed_model,
+    )
     last_reap = 0.0
     while not stopping:
         with pool.connection() as conn:
@@ -112,6 +132,6 @@ def run_forever(pool: ConnectionPool, settings: Settings) -> None:
                 if n := queue.requeue_stale(conn, settings.job_lock_timeout_s):
                     log.warning("requeued %d jobs from dead workers", n)
                 last_reap = time.monotonic()
-            job = run_once(conn, settings, worker_id)
+            job = run_once(conn, settings, worker_id, handlers)
         if job is None:
             time.sleep(settings.worker_poll_interval_s)
